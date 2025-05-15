@@ -1,0 +1,6 @@
+﻿services:
+  seerrfixarr.app:
+    image: seerrfixarr.app
+    build:
+      context: .
+      dockerfile: SeerrFixarr.App/Dockerfile
