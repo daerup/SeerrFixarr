@@ -1,6 +1,6 @@
-namespace SeerrFixarr.App.Settings;
+namespace SeerrFixarr.Shared.Settings;
 
-internal record ApiSettings
+public record ApiSettings
 {
     public required string ApiKey { get; init; }
     public required string ApiUrl { get; init; }

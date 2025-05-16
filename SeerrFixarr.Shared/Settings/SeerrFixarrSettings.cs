@@ -1,6 +1,6 @@
-namespace SeerrFixarr.App.Settings;
+namespace SeerrFixarr.Shared.Settings;
 
-internal record SeerrFixarrSettings
+public record SeerrFixarrSettings
 {
     public required ApiSettings Overseerr { get; init; }
     public required ApiSettings Radarr { get; init; }

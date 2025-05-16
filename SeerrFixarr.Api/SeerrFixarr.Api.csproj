@@ -4,69 +4,23 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UserSecretsId>3bf51a97-1fb3-48f8-a94d-a319123e6fae</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0-preview.4.25258.110" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0-preview.4.25258.110"/>
         <PackageReference Include="NSwag.MSBuild" Version="14.4.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Refit" Version="8.0.0"/>
+        <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0"/>
         <PackageReference Include="System.Net.Http" Version="4.3.4"/>
         <PackageReference Include="System.Text.Json" Version="10.0.0-preview.4.25258.110"/>
     </ItemGroup>
-    
-    <PropertyGroup>
-        <NSwagCommonArgs>/ClientBaseClass:SeerrFixarr.Api.GeneratedClients.GeneratedClientBase /AdditionalNamespaceUsages:SeerrFixarr.Api.GeneratedClients /UseBaseUrl:false /GenerateOptionalParameters:true /GenerateBaseUrlProperty:false /DisposeHttpClient:true /ClassStyle:Record /GenerateResponseClasses:false /GenerateExceptionClasses:false /TypeAccessModifier:internal /ConfigurationClass:GeneratedClientOptions /UseHttpClientCreationMethod:true /InjectHttpClient:false /OperationGenerationMode:SingleClientFromOperationId /JsonLibrary:SystemTextJson /ClientClassAccessModifier:internal /ProtectedMethods:internal</NSwagCommonArgs>
-    </PropertyGroup>
-    
-    <PropertyGroup>
-        <OverseerrOpenApiSpecLocation>GeneratedClients\OpenApiDocuments/overseerr-openapi.yml</OverseerrOpenApiSpecLocation>
-        <OverseerrClientClassName>OverseerrRestClient</OverseerrClientClassName>
-        <OverseerrClientNamespace>GeneratedClients</OverseerrClientNamespace>
-        <OverseerrClientOutputDirectory>GeneratedClients\OverseerrRestClient</OverseerrClientOutputDirectory>
-    </PropertyGroup>
 
-    <Target Name="generateOverseerrClient" BeforeTargets="CoreCompile" Inputs="$(OverseerrOpenApiSpecLocation)" Outputs="$(OverseerrClientOutputDirectory)\$(OverseerrClientClassName).cs">
-        <Exec Command="$(NSwagExe) openapi2csclient /input:$(OverseerrOpenApiSpecLocation) $(NSwagCommonArgs) /classname:$(OverseerrClientClassName) /namespace:$(OverseerrClientNamespace) /output:$(OverseerrClientOutputDirectory)\$(OverseerrClientClassName).cs" ConsoleToMSBuild="true">
-            <Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec"/>
-        </Exec>
-    </Target>
-    <Target Name="forceReGenerationOnRebuild" AfterTargets="CoreClean">
-        <Delete Files="$(OverseerrClientOutputDirectory)\$(OverseerrClientClassName).cs"/>
-    </Target>
-
-    <PropertyGroup>
-        <SonarrOpenApiSpecLocation>GeneratedClients/OpenApiDocuments/sonarr-openapi.json</SonarrOpenApiSpecLocation>
-        <SonarrClientClassName>SonarrRestClient</SonarrClientClassName>
-        <SonarrClientNamespace>GeneratedClients</SonarrClientNamespace>
-        <SonarrClientOutputDirectory>GeneratedClients/SonarrRestClient</SonarrClientOutputDirectory>
-    </PropertyGroup>
-
-    <Target Name="generateSonarrClient" BeforeTargets="CoreCompile" Inputs="$(SonarrOpenApiSpecLocation)" Outputs="$(SonarrClientOutputDirectory)/$(SonarrClientClassName).cs">
-        <Exec Command="$(NSwagExe) openapi2csclient /input:$(SonarrOpenApiSpecLocation) $(NSwagCommonArgs) /classname:$(SonarrClientClassName) /namespace:$(SonarrClientNamespace) /output:$(SonarrClientOutputDirectory)/$(SonarrClientClassName).cs" ConsoleToMSBuild="true">
-            <Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec"/>
-        </Exec>
-    </Target>
-    
-    <Target Name="forceReGenerationOnRebuild" AfterTargets="CoreClean">
-        <Delete Files="$(SonarrClientOutputDirectory)/$(SonarrClientClassName).cs"/>
-    </Target>
-
-    <PropertyGroup>
-        <RadarrOpenApiSpecLocation>GeneratedClients/OpenApiDocuments/radarr-openapi.json</RadarrOpenApiSpecLocation>
-        <RadarrClientClassName>RadarrRestClient</RadarrClientClassName>
-        <RadarrClientNamespace>GeneratedClients</RadarrClientNamespace>
-        <RadarrClientOutputDirectory>GeneratedClients/RadarrRestClient</RadarrClientOutputDirectory>
-    </PropertyGroup>
-
-    <Target Name="generateRadarrClient" BeforeTargets="CoreCompile" Inputs="$(RadarrOpenApiSpecLocation)" Outputs="$(RadarrClientOutputDirectory)\$(RadarrClientClassName).cs">
-        <Exec Command="$(NSwagExe) openapi2csclient /input:$(RadarrOpenApiSpecLocation) $(NSwagCommonArgs) /classname:$(RadarrClientClassName) /namespace:$(RadarrClientNamespace) /output:$(RadarrClientOutputDirectory)\$(RadarrClientClassName).cs" ConsoleToMSBuild="true">
-            <Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec"/>
-        </Exec>
-    </Target>
-    <Target Name="forceReGenerationOnRebuild" AfterTargets="CoreClean">
-        <Delete Files="$(RadarrClientOutputDirectory)\$(RadarrClientClassName).cs"/>
-    </Target>
+    <ItemGroup>
+        <ProjectReference Include="..\SeerrFixarr.Shared\SeerrFixarr.Shared.csproj"/>
+    </ItemGroup>
 
 </Project>

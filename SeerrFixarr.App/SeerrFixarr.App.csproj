@@ -7,6 +7,7 @@
         <Nullable>enable</Nullable>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <LangVersion>preview</LangVersion>
+        <UserSecretsId>3bf51a97-1fb3-48f8-a94d-a319123e6fae</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,11 +26,12 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-      <None Update="Settings\appsettings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      <ProjectReference Include="..\SeerrFixarr.Api\SeerrFixarr.Api.csproj" />
+      <ProjectReference Include="..\SeerrFixarr.Shared\SeerrFixarr.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\SeerrFixarr.Api\SeerrFixarr.Api.csproj" />
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>

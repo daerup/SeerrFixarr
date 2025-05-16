@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using SeerrFixarr.Api;
+using SeerrFixarr.Api.Overseerr;
+using SeerrFixarr.Api.Radarr;
+using SeerrFixarr.Api.Sonarr;
 using SeerrFixarr.App;
-using SeerrFixarr.App.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -14,10 +14,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
 
 builder.AddSeerrFixerrSettings();
-
-builder.Services.AddOverseerrApi();
-builder.Services.AddSonarrApi();
-builder.Services.AddRadarrApi();
+builder.Services.AddSeerFixarrApi();
 
 var app = builder.Build();
 
@@ -27,10 +24,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(o => o.EnableTryItOutByDefault());
 }
 
-app.MapPost("/webhook", async (RadarrApi api) =>
-{
-    await api.GetAllMovies();
-    await Task.CompletedTask;
-});
+app.MapPost("/webhook",
+    async (IOverseerrApi overseerr, IRadarrApi radarr, ISonarrApi sonarr) =>
+    {
+        var issue = await overseerr.GetIssue(1);
+        var someMessage = $"Original comment was '{issue.Comments.First().Message}'";
+        await overseerr.PostIssueComment(issue.Id, someMessage);
+        
+        return issue;
+    });
 
 await app.RunAsync();
