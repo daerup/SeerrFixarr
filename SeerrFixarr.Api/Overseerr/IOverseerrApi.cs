@@ -4,12 +4,36 @@ namespace SeerrFixarr.Api.Overseerr;
 
 public interface IOverseerrApi
 {
+    [Get("/issue")]
+    Task<Issues> GetIssues(int take = 100, int skip = 0, string sort = "added", string filter = "all");
+    
     [Get("/issue/{issueId}")]
     Task<Issue> GetIssue(int issueId);
+    
+    [Delete("/issue/{issueId}")]
+    Task DeleteIssue(int issueId);
     
     [Post("/issue/{issueId}/comment")]
     Task PostIssueComment(int issueId, [Body] Comment message);
     
     [Post("/issue/{issueId}/{status}")]
     Task UpdateIssueStatus(int issueId, IssueStatus status);
+}
+
+public record PageInfo
+{
+    public int Pages { get; init; }
+    public int Results { get; init; }
+    public int Page { get; init; }
+}
+
+public record Issues 
+{
+    public PageInfo PageInfo { get; init; }
+    public IssueId[] Results { get; init; }
+}
+
+public record IssueId
+{
+    public int Id { get; init; }
 }

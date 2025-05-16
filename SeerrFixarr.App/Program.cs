@@ -1,14 +1,9 @@
-﻿using CSharpFunctionalExtensions;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SeerrFixarr.Api;
-using SeerrFixarr.Api.Overseerr;
-using SeerrFixarr.Api.Radarr;
-using SeerrFixarr.Api.Sonarr;
 using SeerrFixarr.App;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +14,10 @@ builder.Services.AddHttpClient();
 
 builder.AddSeerrFixerrSettings();
 builder.Services.AddSeerFixarrApi();
+builder.Services.AddScoped<FileSizeFormatter>();
 builder.Services.AddScoped<WebhookRunner>();
+builder.Services.AddScoped<RadarrRunner>();
+builder.Services.AddScoped<SonarrRunner>();
 
 var app = builder.Build();
 
