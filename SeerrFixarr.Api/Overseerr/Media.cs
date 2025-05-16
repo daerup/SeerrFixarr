@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace SeerrFixarr.Api.Overseerr;
 
 public record Media
 {
+    [JsonPropertyName("externalServiceId")]
     public int Id { get; init; }
     public MediaType MediaType { get; init; }
     public int? TmdbId { get; init; }

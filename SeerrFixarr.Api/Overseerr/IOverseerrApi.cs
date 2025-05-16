@@ -9,4 +9,7 @@ public interface IOverseerrApi
     
     [Post("/issue/{issueId}/comment")]
     Task PostIssueComment(int issueId, [Body] Comment message);
+    
+    [Post("/issue/{issueId}/{status}")]
+    Task UpdateIssueStatus(int issueId, IssueStatus status);
 }
