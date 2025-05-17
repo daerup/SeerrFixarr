@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.AspNetCore.Mvc;
 using SeerrFixarr.Api;
 using SeerrFixarr.App;
 
@@ -27,7 +23,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(o => o.EnableTryItOutByDefault());
 }
 
-app.MapPost("/webhook", async ([FromServices] WebhookRunner runner, [FromBody] dynamic body) =>
+app.MapPost("/webhook", async ([FromServices] WebhookRunner runner, [FromBody] WebhookIssueRoot body) =>
 {
     await runner.RunAsync(body);
     Results.Ok();

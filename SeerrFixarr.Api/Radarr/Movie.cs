@@ -9,6 +9,6 @@ public record Movie
     public bool Monitored { get; init; }
     public int TmdbId { get; init; }
     public DateTime Added { get; init; }
-    public MovieFile MovieFile { get; init; }
+    public MovieFile? MovieFile { get; init; }
     public Collection Collection { get; init; }
 }

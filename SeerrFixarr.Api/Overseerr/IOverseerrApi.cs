@@ -19,21 +19,3 @@ public interface IOverseerrApi
     [Post("/issue/{issueId}/{status}")]
     Task UpdateIssueStatus(int issueId, IssueStatus status);
 }
-
-public record PageInfo
-{
-    public int Pages { get; init; }
-    public int Results { get; init; }
-    public int Page { get; init; }
-}
-
-public record Issues 
-{
-    public PageInfo PageInfo { get; init; }
-    public IssueId[] Results { get; init; }
-}
-
-public record IssueId
-{
-    public int Id { get; init; }
-}

@@ -1,7 +1,5 @@
 using CSharpFunctionalExtensions;
-using Refit;
 using SeerrFixarr.Api.Overseerr;
-using SeerrFixarr.Api.Radarr;
 using SeerrFixarr.Api.Sonarr;
 
 namespace SeerrFixarr.App;

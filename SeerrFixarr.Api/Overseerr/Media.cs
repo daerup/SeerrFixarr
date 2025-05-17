@@ -12,5 +12,5 @@ public record Media
     public int? ImdbId { get; init; }
     public DateTime CreatedAt { get; init; }
     public string? PlexUrl { get; init; }
-    public string? IOsPlexUrl { get; init; }
+    public string? IosPlexUrl { get; init; }
 }

@@ -2,7 +2,6 @@ namespace SeerrFixarr.Api.Overseerr;
 
 public record User
 {
-    public int Permissions { get; init; }
     public int Id { get; init; }
     public string Email { get; init; }
     public string PlexUsername { get; init; }
