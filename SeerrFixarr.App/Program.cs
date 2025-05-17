@@ -10,6 +10,7 @@ builder.Services.AddHttpClient();
 
 builder.AddSeerrFixerrSettings();
 builder.Services.AddSeerFixarrApi();
+builder.Services.AddScoped<ITimeOutProvider, TimeOutProvider>();
 builder.Services.AddScoped<FileSizeFormatter>();
 builder.Services.AddScoped<WebhookRunner>();
 builder.Services.AddScoped<RadarrRunner>();

@@ -5,14 +5,13 @@ using SeerrFixarr.Api.Radarr;
 
 namespace SeerrFixarr.App;
 
-public class RadarrRunner(IOverseerrApi overseerr, IRadarrApi radarr, FileSizeFormatter fileSizeFormatter)
+public class RadarrRunner(IOverseerrApi overseerr, IRadarrApi radarr, ITimeOutProvider timeOutProvider, FileSizeFormatter fileSizeFormatter)
 {
     public async Task HandleMovieIssue(Issue issue)
     {
         var (movie, moviefile) = await GetMovieFileFromIssue(issue);
         await DeleteMovieAsync(issue, movie, moviefile);
-        await Task.Delay(TimeSpan.FromSeconds(5));
-
+        await timeOutProvider.AwaitFileDeletion();
         await GrabMovie(movie, issue);
     }
 
@@ -44,7 +43,8 @@ public class RadarrRunner(IOverseerrApi overseerr, IRadarrApi radarr, FileSizeFo
         }
         
         await radarr.GrabMovie(movie.Id);
-        await Task.Delay(TimeSpan.FromSeconds(10));
+
+        await timeOutProvider.AwaitDownloadQueueUpdated();
         
         var queue = await radarr.GetDownloadQueue(movie.Id);
         var grabbed = queue.FirstOrDefault().AsMaybe();

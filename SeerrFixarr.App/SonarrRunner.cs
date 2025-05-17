@@ -4,7 +4,7 @@ using SeerrFixarr.Api.Sonarr;
 
 namespace SeerrFixarr.App;
 
-public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi soanarr, FileSizeFormatter fileSizeFormatter)
+public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi soanarr, ITimeOutProvider timeOutProvider, FileSizeFormatter fileSizeFormatter)
 {
     public async Task HandleEpisodeIssue(Issue issue)
     {
@@ -27,7 +27,7 @@ public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi soanarr, FileSizeF
             async e =>
             {
                 await DeleteEpisodeAsync(issue, episodefile);
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                await timeOutProvider.AwaitFileDeletion();
                 await GrabEpisode(e, issue);
             },
             async () => await SkipFixing(issue, seasonEpisodeString));
@@ -85,7 +85,7 @@ public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi soanarr, FileSizeF
         }
 
         await soanarr.GrabEpisode(episode.Id);
-        await Task.Delay(TimeSpan.FromSeconds(10));
+        await timeOutProvider.AwaitDownloadQueueUpdated();
         
         var grabbed = (await soanarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
         await grabbed.Match(async f =>

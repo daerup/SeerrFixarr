@@ -15,11 +15,16 @@ public class TestWebApplicationFactory<TProgram> : WebApplicationFactory<TProgra
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        var fakeTimeOutProvider = A.Fake<ITimeOutProvider>();
+        A.CallTo(() => fakeTimeOutProvider.AwaitFileDeletion()).Returns(Task.CompletedTask);
+        A.CallTo(() => fakeTimeOutProvider.AwaitDownloadQueueUpdated()).Returns(Task.CompletedTask);
+        
         builder.ConfigureServices(services =>
         {
             services.AddSingleton<IOverseerrApi, FakeOverseerrApi>();
             services.AddSingleton(A.Fake<ISonarrApi>());
             services.AddSingleton<IRadarrApi, FakeRadarrApi>();
+            services.AddSingleton(fakeTimeOutProvider);
         });
         builder.UseEnvironment(Environments.Production);
     }
