@@ -1,13 +1,7 @@
 using System.Text.Json;
 using FakeItEasy;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using SeerrFixarr.Api.Overseerr;
-using SeerrFixarr.Api.Radarr;
-using SeerrFixarr.Api.Sonarr;
 using SeerrFixarr.App;
 
 namespace SeerrFixarr.Test;

@@ -20,7 +20,7 @@ public static class Extension
         IosPlexUrl = "someIosPlexUrl",
     };
 
-    public static Media ToMediaIssue(this Episode episode) => new ()
+    public static Media ToMediaIssue(this Episode episode) => new()
     {
         Id = episode.SeriesId,
         TvdbId = episode.TvdbId,
@@ -29,13 +29,14 @@ public static class Extension
         PlexUrl = "somePlexUrl",
         IosPlexUrl = "someIosPlexUrl",
     };
-    
-    public static Issue CreatedBy(this Issue issue, User user,  string comment)
+
+    public static Issue CreatedBy(this Issue issue, User user, string comment)
     {
         return issue with
         {
             CreatedBy = user,
-            Comments = [
+            Comments =
+            [
                 new Comment
                 {
                     User = user,
@@ -44,7 +45,7 @@ public static class Extension
             ]
         };
     }
-    
+
     public static WebhookIssueRoot ToWebhookIssueRoot(this Issue issue)
     {
         return new WebhookIssueRoot
@@ -52,5 +53,29 @@ public static class Extension
             IssueId = issue.Id,
             ReportedByUsername = issue.CreatedBy.Username,
         };
+    }
+
+    public static T SingleWithApiException<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+    {
+        try
+        {
+            return collection.Single(predicate);
+        }
+        catch (Exception e)
+        {
+            throw new FakeApiException(e);
+        }
+    }
+
+    public static T? SingleOrDefaultWithApiException<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+    {
+        try
+        {
+            return collection.SingleOrDefault(predicate);
+        }
+        catch (Exception e)
+        {
+            throw new FakeApiException(e);
+        }
     }
 }

@@ -4,7 +4,7 @@
       Message: ⏩ Movie file not found for 'Some other Title', skipping deletion
     },
     {
-      Message: ⬇️ Already grabbed file 'Some.other.Title.test.mkv. 🕒 31.12.2025 14:05:57'
+      Message: ⬇️ Already grabbed file 'some.other.title.test.mkv. 🕒 31.12.2025 14:05:57'
     },
     {
       Message: ✅️ This issue will be closed. Reopen if the problem persists.

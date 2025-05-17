@@ -26,12 +26,12 @@ internal class FakeOverseerrApi : IOverseerrApi
 
     public Task<Issue> GetIssue(int issueId)
     {
-        return Task.FromResult(Issues.Single(i => i.Id == issueId));
+        return Task.FromResult(Issues.SingleWithApiException(i => i.Id == issueId));
     }
 
     public Task DeleteIssue(int issueId)
     {
-        var issue = Issues.Single(i => i.Id == issueId);
+        var issue = Issues.SingleWithApiException(i => i.Id == issueId);
         Issues.Remove(issue);
         return Task.CompletedTask;
     }
@@ -50,7 +50,7 @@ internal class FakeOverseerrApi : IOverseerrApi
 
     public Task UpdateIssueStatus(int issueId, IssueStatus status)
     {
-        var issue = Issues.Single(i => i.Id == issueId);
+        var issue = Issues.SingleWithApiException(i => i.Id == issueId);
         var updatedIssue = issue with { Status = (int)status };
         Issues.Remove(issue);
         Issues.Add(updatedIssue);

@@ -11,7 +11,7 @@ internal class FakeRadarrApi : IRadarrApi
 
     public Task<Movie> GetMovie(int id)
     {
-        var movie = Movies.Single(m => m.Id == id);
+        var movie = Movies.SingleWithApiException(m => m.Id == id);
         return Task.FromResult(movie);
     }
 
@@ -23,7 +23,7 @@ internal class FakeRadarrApi : IRadarrApi
 
     public Task DeleteMovieFile(int movieFileId)
     {
-        var movie = Movies.SingleOrDefault(m => m.MovieFile?.Id == movieFileId).AsMaybe();
+        var movie = Movies.SingleOrDefaultWithApiException(m => m.MovieFile?.Id == movieFileId).AsMaybe();
         movie.Execute(m =>
         {
             var updatedMovie = m with { MovieFile = null, HasFile = false };
@@ -36,7 +36,7 @@ internal class FakeRadarrApi : IRadarrApi
     public Task GrabMovie(SearchMovieRequest request)
     {
         var requestMovieId = request.MovieIds[0];
-        var movie = Movies.Single(m => m.Id == requestMovieId);
+        var movie = Movies.SingleWithApiException(m => m.Id == requestMovieId);
         var download = ConvertToDownload(movie, requestMovieId);
         DownloadQueue.Add(download);
         return Task.CompletedTask;
@@ -49,7 +49,7 @@ internal class FakeRadarrApi : IRadarrApi
         {
             Id = DownloadQueue.Count + 1,
             MovieId = requestMovieId,
-            Title = fileDownloadName,
+            Title = fileDownloadName.ToLower(),
             EstimatedCompletionTime = TestDataBuilder.FakeTimeProvider.GetUtcNow().Add(TimeSpan.FromHours(1)).DateTime,
             Size = (long)Information.FromGibibytes(2).Bytes
         };
