@@ -1,64 +1,80 @@
 using CSharpFunctionalExtensions;
 using SeerrFixarr.Api.Radarr;
+using UnitsNet;
 
 namespace SeerrFixarr.Test;
 
 internal class FakeRadarrApi : IRadarrApi
 {
-    private readonly List<Movie> _movies = [];
-    private readonly List<MovieDownload> downlaodQueue = [];
+    public readonly List<Movie> Movies = [];
+    public readonly List<MovieDownload> DownloadQueue = [];
 
     public Task<Movie> GetMovie(int id)
     {
-        var movie = _movies.Single(m => m.Id == id);
+        var movie = Movies.Single(m => m.Id == id);
         return Task.FromResult(movie);
     }
 
     public Task<Movie[]> GetMovies(int tmdbId)
     {
-        var movies = _movies.Where(m => m.TmdbId == tmdbId).ToArray();
+        var movies = Movies.Where(m => m.TmdbId == tmdbId).ToArray();
         return Task.FromResult(movies);
     }
 
     public Task DeleteMovieFile(int movieFileId)
     {
-        var movie = _movies.SingleOrDefault(m => m.MovieFile?.Id == movieFileId).AsMaybe();
+        var movie = Movies.SingleOrDefault(m => m.MovieFile?.Id == movieFileId).AsMaybe();
         movie.Execute(m =>
         {
             var updatedMovie = m with { MovieFile = null, HasFile = false };
-            _movies.Add(updatedMovie);
-            _movies.Remove(m);
+            Movies.Add(updatedMovie);
+            Movies.Remove(m);
         });
         return Task.CompletedTask;
     }
 
     public Task GrabMovie(SearchMovieRequest request)
     {
-        var movie = _movies.Single(m => m.Id == request.MovieIds[0]);
-        var fileDownloadName = movie.Title.Replace(" ", ".") + ".test.mkv";
-        var download = new MovieDownload
-        {
-            Id = downlaodQueue.Count + 1,
-            Title = fileDownloadName,
-            EstimatedCompletionTime = DateTime.UtcNow.AddHours(1),
-            Size = 100L,
-        };
-        downlaodQueue.Add(download);
+        var requestMovieId = request.MovieIds[0];
+        var movie = Movies.Single(m => m.Id == requestMovieId);
+        var download = ConvertToDownload(movie, requestMovieId);
+        DownloadQueue.Add(download);
         return Task.CompletedTask;
+    }
+
+    private MovieDownload ConvertToDownload(Movie movie, int requestMovieId)
+    {
+        var fileDownloadName = movie.Title.Replace(" ", ".") + ".test.mkv";
+        return new MovieDownload
+        {
+            Id = DownloadQueue.Count + 1,
+            MovieId = requestMovieId,
+            Title = fileDownloadName,
+            EstimatedCompletionTime = TestDataBuilder.FakeTimeProvider.GetUtcNow().Add(TimeSpan.FromHours(1)).DateTime,
+            Size = (long)Information.FromGibibytes(2).Bytes
+        };
     }
 
     public Task<MovieDownload[]> GetDownloadQueue(int movieId)
     {
-        var queue = downlaodQueue.Where(d => d.Id == movieId).ToArray();
+        var queue = DownloadQueue.Where(d => d.MovieId == movieId).ToArray();
         return Task.FromResult(queue);
     }
 
     public void Setup(Movie movie)
     {
-        if (_movies.Any(m => m.Id == movie.Id))
+        if (Movies.Any(m => m.Id == movie.Id))
         {
             throw new InvalidOperationException("Movie already exists");
         }
-        _movies.Add(movie);
+
+        Movies.Add(movie);
+    }
+
+    public void SetupDownloading(Movie movie)
+    {
+        Setup(movie);
+        var download = ConvertToDownload(movie, movie.Id);
+        DownloadQueue.Add(download);
     }
 }

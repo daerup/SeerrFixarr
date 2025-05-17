@@ -1,0 +1,10 @@
+﻿{
+  1: [
+    {
+      Message: ⏩ Movie file not found for 'Some Title', skipping deletion
+    },
+    {
+      Message: ⬇️ Grabbed file 'Some.Title.test.mkv' 💾 2.15 GB 🕒 31.12.2025 14:05:57
+    }
+  ]
+}

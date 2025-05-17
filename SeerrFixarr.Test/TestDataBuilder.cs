@@ -1,3 +1,7 @@
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Time.Testing;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
 using UnitsNet;
@@ -6,10 +10,13 @@ namespace SeerrFixarr.Test;
 
 internal static class TestDataBuilder
 {
+    public static TimeProvider FakeTimeProvider =
+        new FakeTimeProvider(new DateTimeOffset(2025, 12, 31, 12, 05, 57, TimeSpan.Zero));
+
     private static int _idSequence = 0;
 
     public static User TestUser;
-    
+
     static TestDataBuilder()
     {
         var id = GetNextId();
@@ -19,13 +26,14 @@ internal static class TestDataBuilder
             Username = "TestUser",
             Email = "test@user.com",
             PlexUsername = "TestPlexUser",
-            PlexId = 123456+id,
-            CreatedAt = DateTime.Now,
-            RequestCount = new Random().Next(0, 10),
+            PlexId = 123456 + id,
+            CreatedAt = FakeTimeProvider.GetUtcNow().DateTime,
+            RequestCount = 5,
             DisplayName = "Test User"
         };
-
     }
+
+    public static void Reset() => _idSequence = 0;
 
     public static Issue CreateIssueFor(MediaUnion mediaUnion)
     {
@@ -34,18 +42,18 @@ internal static class TestDataBuilder
             issue => issue.Movie.ToMediaIssue(),
             issue => issue.Episode.ToMediaIssue()
         );
-        
-        var (problemSesons, problemEpisode)  = mediaUnion.Match(
-            _ => (0,0),
+
+        var (problemSesons, problemEpisode) = mediaUnion.Match(
+            _ => (0, 0),
             episode => (episode.Episode.SeasonNumber, episode.Episode.EpisodeNumber)
         );
-        
+
         return new Issue
         {
             Id = id,
             Status = (int)IssueStatus.Open,
-            CreatedAt = DateTime.Today,
-            UpdatedAt = DateTime.Today,
+            CreatedAt = FakeTimeProvider.GetLocalNow().Date,
+            UpdatedAt = FakeTimeProvider.GetLocalNow().Date,
             ProblemEpisode = problemEpisode,
             ProblemSeason = problemSesons,
             Media = media,
@@ -59,11 +67,11 @@ internal static class TestDataBuilder
         {
             Id = id,
             Title = title,
-            TmdbId = 123456+id,
-            Added = DateTime.Now,
+            TmdbId = 123456 + id,
+            Added = FakeTimeProvider.GetUtcNow().DateTime,
             HasFile = false,
             Monitored = true,
-            ReleaseDate = DateTime.Now.Subtract(TimeSpan.FromDays(100)),
+            ReleaseDate = FakeTimeProvider.GetUtcNow().DateTime.Subtract(TimeSpan.FromDays(100)),
         };
     }
 
@@ -74,19 +82,12 @@ internal static class TestDataBuilder
         {
             Id = id,
             Path = title,
-            Size = GetRandomSize(),
+            Size = (long)Information.FromGibibytes(5).Bytes
         };
     }
-    
+
     private static int GetNextId()
     {
         return _idSequence++;
-    }
-    
-    private static long GetRandomSize()
-    {
-        var random = new Random();
-        var gigabytes = random.Next(1, 30);
-        return (long)Information.FromGibibytes(gigabytes).Bytes;
     }
 }
