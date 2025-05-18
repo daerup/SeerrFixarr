@@ -1,6 +1,8 @@
 using SeerrFixarr.Api.Overseerr;
+using SeerrFixarr.App.Runners.Radarr;
+using SeerrFixarr.App.Runners.Sonarr;
 
-namespace SeerrFixarr.App;
+namespace SeerrFixarr.App.Runners.Webhook;
 
 public class WebhookRunner(IOverseerrApi overseerr, RadarrRunner radarrRunner, SonarrRunner sonarrRunner)
 {

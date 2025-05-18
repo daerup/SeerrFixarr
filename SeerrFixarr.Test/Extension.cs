@@ -1,7 +1,7 @@
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
 using SeerrFixarr.Api.Sonarr;
-using SeerrFixarr.App;
+using SeerrFixarr.App.Runners.Webhook;
 
 namespace SeerrFixarr.Test;
 

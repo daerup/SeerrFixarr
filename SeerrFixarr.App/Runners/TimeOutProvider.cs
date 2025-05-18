@@ -1,4 +1,10 @@
-namespace SeerrFixarr.App;
+namespace SeerrFixarr.App.Runners;
+
+public interface ITimeOutProvider
+{
+  Task AwaitDownloadQueueUpdated();
+  Task AwaitFileDeletion();
+}
 
 internal class TimeOutProvider : ITimeOutProvider
 {

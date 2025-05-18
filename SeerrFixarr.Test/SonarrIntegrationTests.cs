@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using SeerrFixarr.Api.Overseerr;
-using SeerrFixarr.Api.Radarr;
 using SeerrFixarr.Api.Sonarr;
-using SeerrFixarr.App;
+using SeerrFixarr.App.Runners;
 using Shouldly;
 
 namespace SeerrFixarr.Test;

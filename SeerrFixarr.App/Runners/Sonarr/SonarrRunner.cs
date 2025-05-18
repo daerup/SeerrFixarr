@@ -2,10 +2,10 @@ using CSharpFunctionalExtensions;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Sonarr;
 
-namespace SeerrFixarr.App;
+namespace SeerrFixarr.App.Runners.Sonarr;
 
 public class 
-  SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutProvider timeOutProvider, FileSizeFormatter fileSizeFormatter)
+  SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutProvider timeOutProvider)
 {
   public async Task HandleEpisodeIssue(Issue issue)
   {
@@ -79,7 +79,7 @@ public class
     var alreadyGrabbed = (await sonarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
     if (alreadyGrabbed.HasValue)
     {
-      await HandleDownloadAlreadyInProgress(issue, alreadyGrabbed.Value!);
+      await HandleDownloadAlreadyInProgress(issue, alreadyGrabbed.Value);
       return;
     }
 
@@ -103,8 +103,7 @@ public class
 
   private async Task Grabbed(Issue issue, EpisodeDownload file)
   {
-    var fileSize = fileSizeFormatter.GetFileSize(file.Size);
-    var comment = @$"⬇️ Grabbed file '{file.Title}' 💾 {fileSize} 🕒 {file.EstimatedCompletionTime.ToLocalTime()}";
+    var comment = @$"⬇️ Grabbed file '{file.Title}' 💾 {file.GetReadableFileSize()} 🕒 {file.EstimatedCompletionTime.ToLocalTime()}";
     await overseerr.PostIssueComment(issue.Id, comment);
     await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
   }
@@ -118,11 +117,10 @@ public class
     );
   }
 
-  private async Task DeleteFile(Issue issue, EpisodeFile episodeFile, string episodeIdentifier)
+  private async Task DeleteFile(Issue issue, EpisodeFile file, string episodeIdentifier)
   {
-    var fileSize = fileSizeFormatter.GetFileSize(episodeFile.Size);
-    await overseerr.PostIssueComment(issue.Id, @$"🗑️ Deleting file of '{episodeIdentifier}' ({fileSize})");
-    await sonarr.DeleteEpisodeFile(episodeFile.Id);
-    await overseerr.PostIssueComment(issue.Id, @$"✅ Successfully deleted episode file ({fileSize})");
+    await overseerr.PostIssueComment(issue.Id, @$"🗑️ Deleting file of '{episodeIdentifier}' ({file.GetReadableFileSize()})");
+    await sonarr.DeleteEpisodeFile(file.Id);
+    await overseerr.PostIssueComment(issue.Id, @$"✅ Successfully deleted episode file ({file.GetReadableFileSize()})");
   }
 }

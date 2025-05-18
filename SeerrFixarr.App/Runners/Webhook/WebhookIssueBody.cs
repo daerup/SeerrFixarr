@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SeerrFixarr.App;
+namespace SeerrFixarr.App.Runners.Webhook;
 
 public record WebhookIssueBody
 {

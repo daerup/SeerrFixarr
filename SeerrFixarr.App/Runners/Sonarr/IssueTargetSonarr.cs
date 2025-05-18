@@ -1,4 +1,4 @@
-namespace SeerrFixarr.App;
+namespace SeerrFixarr.App.Runners.Sonarr;
 
 internal enum IssueTargetSonarr 
 {

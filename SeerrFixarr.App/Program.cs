@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeerrFixarr.Api;
 using SeerrFixarr.App;
+using SeerrFixarr.App.Runners;
+using SeerrFixarr.App.Runners.Radarr;
+using SeerrFixarr.App.Runners.Sonarr;
+using SeerrFixarr.App.Runners.Webhook;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -11,7 +15,6 @@ builder.Services.AddHttpClient();
 builder.AddSeerrFixerrSettings();
 builder.Services.AddSeerFixarrApi();
 builder.Services.AddScoped<ITimeOutProvider, TimeOutProvider>();
-builder.Services.AddScoped<FileSizeFormatter>();
 builder.Services.AddScoped<WebhookRunner>();
 builder.Services.AddScoped<RadarrRunner>();
 builder.Services.AddScoped<SonarrRunner>();

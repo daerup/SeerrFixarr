@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
-using SeerrFixarr.App;
+using SeerrFixarr.App.Runners;
 using Shouldly;
 
 namespace SeerrFixarr.Test;

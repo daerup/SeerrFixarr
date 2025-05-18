@@ -38,4 +38,17 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Update="Translations.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Translations.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Translations.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Translations.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
 </Project>
