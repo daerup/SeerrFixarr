@@ -101,7 +101,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var movie = TestDataBuilder.CreateMovie("Some other Title");
         var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(testUser, "Test comment");
-        
+
         _radarrApi.SetupDownloading(movie);
         _overseerrApi.Setup(issue);
         _overseerrApi.Setup(testUser);
@@ -148,7 +148,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         var file = TestDataBuilder.CreateMovieFile("some.title.mkv");
         var movie = TestDataBuilder.CreateMovie("Some other Title").WithFile(file);
         var issue = TestDataBuilder.CreateIssueFor(movie).By(testUser, "Test comment");
-        SetUpCustomAwaitDownloadQueueUpdatedBehavior(() => _radarrApi.DownloadQueue.Clear());
+        TestHelper.SetUpCustomAwaitDownloadQueueUpdatedBehavior(_application, () => _radarrApi.DownloadQueue.Clear());
 
         _overseerrApi.Setup(issue);
         _radarrApi.Setup(movie);
@@ -162,14 +162,33 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         await Verify(_overseerrApi.Comments.Values);
     }
 
-    private void SetUpCustomAwaitDownloadQueueUpdatedBehavior(Action action)
+
+    [Theory, CombinatorialData]
+    public async Task FailedToGrabEpisodeFileRetries([CombinatorialValues("en", "de", "zh", "")] string local)
     {
-        var timeOutProvider = _application.Services.GetRequiredService<ITimeOutProvider>();
-        A.CallTo(() => timeOutProvider.AwaitDownloadQueueUpdated()).ReturnsLazily(() =>
+        // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
+        var file = TestDataBuilder.CreateMovieFile("some.title.mkv");
+        var movie = TestDataBuilder.CreateMovie("Some other Title").WithFile(file);
+        var issue = TestDataBuilder.CreateIssueFor(movie).By(testUser, "Test comment");
+
+        List<MovieDownload> queue = [];
+        TestHelper.SetUpCustomAwaitDownloadQueueUpdatedBehavior(_application, () =>
         {
-            action();
-            return Task.CompletedTask;
-        });
+            queue.AddRange(_radarrApi.DownloadQueue);
+            _radarrApi.DownloadQueue.Clear();
+        }, () => _radarrApi.DownloadQueue.AddRange(queue));
+
+        _overseerrApi.Setup(issue);
+        _radarrApi.Setup(movie);
+        _overseerrApi.Setup(testUser);
+
+        // Act
+        await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+
+        // Assert
+        _radarrApi.DownloadQueue.Count.ShouldBe(1);
+        await Verify(_overseerrApi.Comments.Values);
     }
 
     private static Movie GetMovieIdOverride(int? idOverride, Movie movie)

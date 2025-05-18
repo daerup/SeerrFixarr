@@ -1,11 +1,9 @@
 using System.Net;
-using FakeItEasy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Sonarr;
-using SeerrFixarr.App.Runners;
 using Shouldly;
 
 namespace SeerrFixarr.Test;
@@ -119,7 +117,7 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         var file = TestDataBuilder.CreateEpisodeFile("some.episode.mkv");
         var episode = TestDataBuilder.CreateEpisode("Some other Show", 1).WithFile(file);
         var issue = TestDataBuilder.CreateIssueFor(episode).By(testUser, "Test comment");
-        SetUpCustomAwaitDownloadQueueUpdatedBehavior(() => _sonarrApi.DownloadQueue.Clear());
+        TestHelper.SetUpCustomAwaitDownloadQueueUpdatedBehavior(_application, () => _sonarrApi.DownloadQueue.Clear());
 
         _overseerrApi.Setup(issue);
         _sonarrApi.Setup(episode);
@@ -133,13 +131,31 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         await Verify(_overseerrApi.Comments.Values);
     }
 
-    private void SetUpCustomAwaitDownloadQueueUpdatedBehavior(Action action)
+    [Theory, CombinatorialData]
+    public async Task FailedToGrabEpisodeFileRetries([CombinatorialValues("en", "de", "zh", "")] string local)
     {
-        var timeOutProvider = _application.Services.GetRequiredService<ITimeOutProvider>();
-        A.CallTo(() => timeOutProvider.AwaitDownloadQueueUpdated()).ReturnsLazily(() =>
+        // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
+        var file = TestDataBuilder.CreateEpisodeFile("some.episode.mkv");
+        var episode = TestDataBuilder.CreateEpisode("Some other Show", 1).WithFile(file);
+        var issue = TestDataBuilder.CreateIssueFor(episode).By(testUser, "Test comment");
+
+        List<EpisodeDownload> queue = [];
+        TestHelper.SetUpCustomAwaitDownloadQueueUpdatedBehavior(_application, () =>
         {
-            action();
-            return Task.CompletedTask;
-        });
+            queue.AddRange(_sonarrApi.DownloadQueue);
+            _sonarrApi.DownloadQueue.Clear();
+        }, () => _sonarrApi.DownloadQueue.AddRange(queue));
+
+        _overseerrApi.Setup(issue);
+        _sonarrApi.Setup(episode);
+        _overseerrApi.Setup(testUser);
+
+        // Act
+        await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+
+        // Assert
+        _sonarrApi.DownloadQueue.Count.ShouldBe(1);
+        await Verify(_overseerrApi.Comments.Values);
     }
 }

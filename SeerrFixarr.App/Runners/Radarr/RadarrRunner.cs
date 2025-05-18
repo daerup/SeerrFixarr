@@ -2,6 +2,7 @@ using CSharpFunctionalExtensions;
 using Refit;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
+using Serilog;
 
 namespace SeerrFixarr.App.Runners.Radarr;
 
@@ -55,18 +56,38 @@ public class RadarrRunner(
 
     await timeOutProvider.AwaitDownloadQueueUpdated();
 
-    var queue = await radarr.GetDownloadQueue(movie.Id);
-    var grabbed = queue.FirstOrDefault().AsMaybe();
-    await grabbed.Match(
-      async file => await Grabbed(issue, file),
-      async () => await overseerr.PostIssueComment(issue.Id, movie.NotGrabbedMessage())
-    );
+    await CheckIfGrabbed(movie, issue);
+  }
+
+  private async Task CheckIfGrabbed(Movie movie, Issue issue, int retryCount = 0)
+  {
+      var queue = await radarr.GetDownloadQueue(movie.Id);
+      var grabbed = queue.FirstOrDefault().AsMaybe();
+      await grabbed.Match(
+          async file => await Grabbed(issue, file),
+          async () => await NotGrabbed(movie, issue, retryCount)
+      );
   }
 
   private async Task Grabbed(Issue issue, MovieDownload file)
   {
     await overseerr.PostIssueComment(issue.Id, file.GrabbedMessage());
     await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
+  }
+  
+  private async Task NotGrabbed(Movie movie, Issue issue, int retryCount)
+  {
+      await timeOutProvider.AwaitDownloadQueueUpdated();
+      if (retryCount >= 3)
+      {
+          Log.Information("Could not grab episode {identifier} after 3 attempts, closing issue...", issue.GetIdentifier());
+          await overseerr.PostIssueComment(issue.Id, movie.NotGrabbedMessage());
+          await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
+          return;
+      }
+        
+      Log.Information("Could not grab episode {identifier}, retrying...", issue.GetIdentifier());
+      await CheckIfGrabbed(movie, issue, ++retryCount);
   }
 
   private async Task DeleteMovieAsync(Issue issue, Movie movie, Maybe<MovieFile> file)

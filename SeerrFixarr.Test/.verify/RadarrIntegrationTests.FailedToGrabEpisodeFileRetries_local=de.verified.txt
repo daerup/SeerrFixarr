@@ -1,0 +1,13 @@
+﻿[
+  [
+    {
+      Message: 🗑️ Datei von 'Some other Title' wird gelöscht (5.37 GB)
+    },
+    {
+      Message: ✅ Filmdatei erfolgreich gelöscht (5.37 GB)
+    },
+    {
+      Message: ⬇️ Datei 'some.other.title.test.mkv' wurde gefunden 💾 2.15 GB 🕒 31.12.2025 14:05:57
+    }
+  ]
+]
