@@ -1,7 +1,7 @@
 namespace SeerrFixarr.Api.Overseerr;
 
-public record Issues 
+public record Issues
 {
-    public PageInfo PageInfo { get; init; }
-    public IssueId[] Results { get; init; }
+    public PageInfo PageInfo { get; init; } = null!;
+    public IssueId[] Results { get; init; } = [];
 }

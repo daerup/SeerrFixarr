@@ -33,7 +33,7 @@ public class RadarrRunner(
                 var movie = (await radarr.GetMovies(issue.Media.TmdbId!.Value)).Single();
                 return (movie, movie.MovieFile);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 await overseerr.PostIssueComment(issue.Id, @$"🔎 Could not find movie with id '{issue.Media.Id}'");
                 throw;
@@ -62,7 +62,8 @@ public class RadarrRunner(
         var grabbed = queue.FirstOrDefault().AsMaybe();
         await grabbed.Match(
             async file => await Grabbed(issue, file),
-            async () => await overseerr.PostIssueComment(issue.Id, @$"🥺 Could not grab file for '{movie.Title}'"));
+            async () => await overseerr.PostIssueComment(issue.Id, @$"🥺 Could not grab file for '{movie.Title}'")
+        );
     }
 
     private async Task Grabbed(Issue issue, MovieDownload file)

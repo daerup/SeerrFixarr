@@ -4,123 +4,124 @@ using SeerrFixarr.Api.Sonarr;
 
 namespace SeerrFixarr.App;
 
-public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi soanarr, ITimeOutProvider timeOutProvider, FileSizeFormatter fileSizeFormatter)
+public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutProvider timeOutProvider, FileSizeFormatter fileSizeFormatter)
 {
-    public async Task HandleEpisodeIssue(Issue issue)
+  public async Task HandleEpisodeIssue(Issue issue)
+  {
+    await (GetTarget(issue) switch
     {
-        var task = GetTarget(issue) switch
-        {
-            IssueTargetSonarr.SpecificEpisode => HandleSpecificEpisode(issue),
-            IssueTargetSonarr.WholeSeason => HandleWholeSeason(issue),
-            IssueTargetSonarr.AllSeasons => HandleAllSeasons(issue),
-            _ => Task.CompletedTask
-        };
-        await task;
+      IssueTargetSonarr.SpecificEpisode => HandleSpecificEpisode(issue),
+      IssueTargetSonarr.WholeSeason => HandleWholeSeason(issue),
+      IssueTargetSonarr.AllSeasons => HandleAllSeasons(issue),
+    });
+  }
+
+  private async Task HandleSpecificEpisode(Issue issue)
+  {
+    var seasonEpisodeString = issue.GetIdentifier();
+    var (episode, episodeFile) = await GetEpisodeFileFromIssue(issue);
+
+    await episode.Match(
+      async e =>
+      {
+        await DeleteEpisodeAsync(issue, episodeFile);
+        await timeOutProvider.AwaitFileDeletion();
+        await GrabEpisode(e, issue);
+      },
+      async () => await SkipFixing(issue, seasonEpisodeString));
+  }
+
+  private async Task SkipFixing(Issue issue, string seasonEpisodeString)
+  {
+    await overseerr.PostIssueComment(issue.Id,
+      @$"❌ {seasonEpisodeString} not found, cannot automatically fix this issue");
+    await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
+  }
+
+  private async Task HandleAllSeasons(Issue issue)
+  {
+    await overseerr.PostIssueComment(issue.Id,
+      @"❌ Whole shows cannot be automatically fixed. Please recreate the issue with a specific episode.");
+    await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
+  }
+
+  private async Task HandleWholeSeason(Issue issue)
+  {
+    await overseerr.PostIssueComment(issue.Id,
+      @"❌ Whole seasons cannot be automatically fixed. Please recreate the issue with a specific episode.");
+    await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
+  }
+
+  private static IssueTargetSonarr GetTarget(Issue issue)
+  {
+    return issue switch
+    {
+      { ProblemEpisode: > 0, ProblemEpisode: > 0 } => IssueTargetSonarr.SpecificEpisode,
+      { ProblemSeason: > 0, ProblemEpisode: 0 } => IssueTargetSonarr.WholeSeason,
+      { ProblemSeason: 0, ProblemEpisode: 0 } => IssueTargetSonarr.AllSeasons,
+      _ => throw new ArgumentOutOfRangeException($"Unknown issue type: {issue}")
+    };
+  }
+
+  private async Task<(Maybe<Episode>, Maybe<EpisodeFile>)> GetEpisodeFileFromIssue(Issue issue)
+  {
+    var episodeNumber = issue.ProblemEpisode!.Value;
+    var seasonNumber = issue.ProblemSeason!.Value;
+    var episodes = await sonarr.GetEpisodes(issue.Media.Id, seasonNumber);
+    var episode = episodes.SingleOrDefault(e => e.EpisodeNumber == episodeNumber).AsMaybe();
+    var episodeFile = episode.Bind(e => e.EpisodeFile.AsMaybe());
+    return (episode, episodeFile);
+  }
+
+  private async Task GrabEpisode(Episode episode, Issue issue)
+  {
+    var alreadyGrabbed = (await sonarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
+    if (alreadyGrabbed.HasValue)
+    {
+      await HandleDownloadAlreadyInProgress(issue, alreadyGrabbed.Value!);
+      return;
     }
 
-    private async Task HandleSpecificEpisode(Issue issue)
-    {
-        var seasonEpisodeString = SeasonEpisodeString(issue);
-        var (episode, episodefile) = await GetEpisodeFileFromIssue(issue);
-        
-        await episode.Match( 
-            async e =>
-            {
-                await DeleteEpisodeAsync(issue, episodefile);
-                await timeOutProvider.AwaitFileDeletion();
-                await GrabEpisode(e, issue);
-            },
-            async () => await SkipFixing(issue, seasonEpisodeString));
-    }
+    await sonarr.GrabEpisode(episode.Id);
+    await timeOutProvider.AwaitDownloadQueueUpdated();
 
-    private async Task SkipFixing(Issue issue, string seasonEpisodeString)
-    {
-        await overseerr.PostIssueComment(issue.Id, @$"❌ {seasonEpisodeString} not found, cannot automatically fix this issue");
-        await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
-    }
+    var grabbed = (await sonarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
+    await grabbed.Match(
+      async f => await Grabbed(issue, f),
+      async () => await overseerr.PostIssueComment(issue.Id, @$"🥺 Could not grab file of '{issue.GetIdentifier()}'")
+    );
+  }
 
-    private async Task HandleAllSeasons(Issue issue)
-    {
-        await overseerr.PostIssueComment(issue.Id,  @"❌ Whole shows cannot be automatically fixed. Please recreate the issue with a specific episode.");
-        await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
-    }
-    
-    private async Task HandleWholeSeason(Issue issue)
-    {
-        await overseerr.PostIssueComment(issue.Id,  @"❌ Whole seasons cannot be automatically fixed. Please recreate the issue with a specific episode.");
-        await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
-    }
+  private async Task HandleDownloadAlreadyInProgress(Issue issue, EpisodeDownload alreadyGrabbed)
+  {
+    var episodeIdentifier = issue.GetIdentifier();
+    await overseerr.PostIssueComment(issue.Id, @$"⬇️ Already grabbed file for '{episodeIdentifier}'. 🕒 {alreadyGrabbed.EstimatedCompletionTime.ToLocalTime()}'");
+    await overseerr.PostIssueComment(issue.Id, @"✅️ This issue will be closed. Reopen if the problem persists.");
+    await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
+  }
 
-    private static IssueTargetSonarr GetTarget(Issue issue)
-    {
-        return issue switch 
-        {
-            { ProblemEpisode: > 0, ProblemEpisode: > 0 } => IssueTargetSonarr.SpecificEpisode,
-            { ProblemSeason: > 0, ProblemEpisode: 0  } => IssueTargetSonarr.WholeSeason,
-            { ProblemSeason: 0, ProblemEpisode: 0 } => IssueTargetSonarr.AllSeasons,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-    }
+  private async Task Grabbed(Issue issue, EpisodeDownload file)
+  {
+    var fileSize = fileSizeFormatter.GetFileSize(file.Size);
+    var comment = @$"⬇️ Grabbed file '{file.Title}' 💾 {fileSize} 🕒 {file.EstimatedCompletionTime.ToLocalTime()}";
+    await overseerr.PostIssueComment(issue.Id, comment);
+    await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
+  }
 
-    private async Task<(Maybe<Episode>, Maybe<EpisodeFile>)> GetEpisodeFileFromIssue(Issue issue)
-    {
-        var episodeNumber = issue.ProblemEpisode!.Value;
-        var seasonNumber = issue.ProblemSeason!.Value;
-        var episodes = await soanarr.GetEpisodes(issue.Media.Id, seasonNumber);
-        var episode = episodes.SingleOrDefault(e => e.EpisodeNumber == episodeNumber).AsMaybe();
-        return (episode, episode.Select(e => e.EpisodeFile));
-    }
-    
-    private async Task GrabEpisode(Episode episode, Issue issue)
-    {
-        var seasonEpisodeString = SeasonEpisodeString(issue);
-        
-        var alreadyGrabbed = (await soanarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
-        if (alreadyGrabbed.HasValue)
-        {
-            await overseerr.PostIssueComment(issue.Id, @$"⬇️ Already grabbed file for '{seasonEpisodeString}'. 🕒 {alreadyGrabbed.Value.EstimatedCompletionTime.ToLocalTime()}'");
-            await overseerr.PostIssueComment(issue.Id, @"✅️ This issue will be closed. Reopen if the problem persists.");
-            await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
-            return;
-        }
+  private async Task DeleteEpisodeAsync(Issue issue, Maybe<EpisodeFile> episodeFile)
+  {
+    var identifier = issue.GetIdentifier();
+    await episodeFile.Match(
+      async file => await DeleteFile(issue, file, identifier),
+      async () => await overseerr.PostIssueComment(issue.Id, @$"⏩ Episode file not found for '{identifier}', skipping deletion")
+    );
+  }
 
-        await soanarr.GrabEpisode(episode.Id);
-        await timeOutProvider.AwaitDownloadQueueUpdated();
-        
-        var grabbed = (await soanarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
-        await grabbed.Match(async f =>
-            {
-                var fileSize = fileSizeFormatter.GetFileSize(f.Size);
-                var comment = @$"⬇️ Grabbed file '{f.Title}' 💾 {fileSize} 🕒 {f.EstimatedCompletionTime.ToLocalTime()}";
-                await overseerr.PostIssueComment(issue.Id, comment);
-                await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
-            },
-            async () =>
-            {
-                await overseerr.PostIssueComment(issue.Id, @$"🥺 Could not grab file of '{seasonEpisodeString}'");
-            });
-    }
-
-    private async Task DeleteEpisodeAsync(Issue issue, Maybe<EpisodeFile> episodefile)
-    {
-        var seasonEpisodeString = SeasonEpisodeString(issue);
-        await episodefile.Match(async episodeFile =>
-            {
-                var fileSize = fileSizeFormatter.GetFileSize(episodeFile.Size);
-                await overseerr.PostIssueComment(issue.Id, @$"🗑️ Deleting file of '{seasonEpisodeString}' ({fileSize})");
-                await soanarr.DeleteEpisodeFile(episodeFile.Id);
-                await overseerr.PostIssueComment(issue.Id, @$"✅ Successfully deleted episode file ({fileSize})");
-            },
-            async () =>
-            {
-                await overseerr.PostIssueComment(issue.Id, @$"⏩ Episode file not found for '{seasonEpisodeString}', skipping deletion");
-            });
-    }
-
-    private string SeasonEpisodeString(Issue issue)
-    {
-        var episodeNumber = issue.ProblemEpisode!.Value;
-        var seasonNumber = issue.ProblemSeason!.Value;
-        return $"S{seasonNumber:D2}E{episodeNumber:D2}";
-    }
+  private async Task DeleteFile(Issue issue, EpisodeFile episodeFile, string episodeIdentifier)
+  {
+    var fileSize = fileSizeFormatter.GetFileSize(episodeFile.Size);
+    await overseerr.PostIssueComment(issue.Id, @$"🗑️ Deleting file of '{episodeIdentifier}' ({fileSize})");
+    await sonarr.DeleteEpisodeFile(episodeFile.Id);
+    await overseerr.PostIssueComment(issue.Id, @$"✅ Successfully deleted episode file ({fileSize})");
+  }
 }

@@ -13,7 +13,7 @@ public static class WebApplicationFactoryExtension
         var fakeTimeOutProvider = A.Fake<ITimeOutProvider>();
         A.CallTo(() => fakeTimeOutProvider.AwaitFileDeletion()).Returns(Task.CompletedTask);
         A.CallTo(() => fakeTimeOutProvider.AwaitDownloadQueueUpdated()).Returns(Task.CompletedTask);
-        services.AddSingleton<ITimeOutProvider>(fakeTimeOutProvider);
+        services.AddSingleton(fakeTimeOutProvider);
     }
 
     internal static async Task<HttpResponseMessage> CallIssueWebhook(this WebApplicationFactory<Program> factory, object body)

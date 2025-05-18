@@ -10,7 +10,7 @@ internal static class TestDataBuilder
     public static TimeProvider FakeTimeProvider =
         new FakeTimeProvider(new DateTimeOffset(2025, 12, 31, 12, 05, 57, TimeSpan.Zero));
 
-    private static int _idSequence = 0;
+    private static int _idSequence;
 
     public static User TestUser;
 

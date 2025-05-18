@@ -27,7 +27,6 @@ public static class ServiceCollectionExtensions
     {
         builder.ConfigureHttpClient((serviceProvider, client) =>
         {
-            var tsettingsName = typeof(TSettings).Name;
             var (apiUrl, apiKey) = configSelector(serviceProvider.GetRequiredService<IOptions<TSettings>>().Value);
             client.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
             client.BaseAddress = new Uri(apiUrl);
