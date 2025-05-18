@@ -1,6 +1,6 @@
 namespace SeerrFixarr.Api.Sonarr;
 
-public class Episode
+public record Episode
 {
     public int Id { get; init; }
     public int SeriesId { get; init; }

@@ -5,7 +5,7 @@ namespace SeerrFixarr.Api.Sonarr;
 public interface ISonarrApi
 {
     [Get("/episode/{id}")]
-    Task GetEpisode([AliasAs("id")] int episodeId);
+    Task<Episode> GetEpisode([AliasAs("id")] int episodeId);
     
     [Get("/episode")] 
     Task<Episode[]> GetEpisodes(int seriesId, int seasonNumber, bool includeEpisodeFile = true);

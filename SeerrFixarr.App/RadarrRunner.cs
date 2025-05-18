@@ -13,13 +13,13 @@ public class RadarrRunner(
 {
     public async Task HandleMovieIssue(Issue issue)
     {
-        var (movie, moviefile) = await GetMovieFileFromIssue(issue);
+        var (movie, moviefile) = await GetMovieFromIssue(issue);
         await DeleteMovieAsync(issue, movie, moviefile);
         await timeOutProvider.AwaitFileDeletion();
         await GrabMovie(movie, issue);
     }
 
-    private async Task<(Movie, Maybe<MovieFile>)> GetMovieFileFromIssue(Issue issue)
+    private async Task<(Movie, Maybe<MovieFile>)> GetMovieFromIssue(Issue issue)
     {
         try
         {

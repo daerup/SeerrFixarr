@@ -1,5 +1,5 @@
-﻿{
-  1: [
+﻿[
+  [
     {
       Message: ⏩ Movie file not found for 'Some other Title', skipping deletion
     },
@@ -10,4 +10,4 @@
       Message: ✅️ This issue will be closed. Reopen if the problem persists.
     }
   ]
-}
+]

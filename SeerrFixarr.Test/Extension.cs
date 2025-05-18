@@ -9,6 +9,7 @@ public static class Extension
 {
     public static Movie InCollection(this Movie movie, Collection collection) => movie with { Collection = collection };
     public static Movie WithFile(this Movie movie, MovieFile file) => movie with { HasFile = true, MovieFile = file };
+    public static Episode WithFile(this Episode episode, EpisodeFile file) => episode with { HasFile = true, EpisodeFile = file };
 
     public static Media ToMediaIssue(this Movie movie) => new()
     {
@@ -24,13 +25,13 @@ public static class Extension
     {
         Id = episode.SeriesId,
         TvdbId = episode.TvdbId,
-        MediaType = MediaType.Movie,
+        MediaType = MediaType.Tv,
         CreatedAt = episode.AirDateUtc,
         PlexUrl = "somePlexUrl",
         IosPlexUrl = "someIosPlexUrl",
     };
 
-    public static Issue CreatedBy(this Issue issue, User user, string comment)
+    public static Issue By(this Issue issue, User user, string comment)
     {
         return issue with
         {

@@ -1,5 +1,5 @@
-﻿{
-  2: [
+﻿[
+  [
     {
       Message: 🗑️ Deleting file of 'Some Title' (5.37 GB)
     },
@@ -10,4 +10,4 @@
       Message: ⬇️ Grabbed file 'some.title.test.mkv' 💾 2.15 GB 🕒 31.12.2025 14:05:57
     }
   ]
-}
+]

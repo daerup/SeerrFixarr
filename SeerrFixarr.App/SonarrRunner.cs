@@ -4,7 +4,8 @@ using SeerrFixarr.Api.Sonarr;
 
 namespace SeerrFixarr.App;
 
-public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutProvider timeOutProvider, FileSizeFormatter fileSizeFormatter)
+public class 
+  SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutProvider timeOutProvider, FileSizeFormatter fileSizeFormatter)
 {
   public async Task HandleEpisodeIssue(Issue issue)
   {
@@ -19,7 +20,7 @@ public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutPr
   private async Task HandleSpecificEpisode(Issue issue)
   {
     var seasonEpisodeString = issue.GetIdentifier();
-    var (episode, episodeFile) = await GetEpisodeFileFromIssue(issue);
+    var (episode, episodeFile) = await GetEpisodeFromIssue(issue);
 
     await episode.Match(
       async e =>
@@ -63,7 +64,7 @@ public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutPr
     };
   }
 
-  private async Task<(Maybe<Episode>, Maybe<EpisodeFile>)> GetEpisodeFileFromIssue(Issue issue)
+  private async Task<(Maybe<Episode>, Maybe<EpisodeFile>)> GetEpisodeFromIssue(Issue issue)
   {
     var episodeNumber = issue.ProblemEpisode!.Value;
     var seasonNumber = issue.ProblemSeason!.Value;

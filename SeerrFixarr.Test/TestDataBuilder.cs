@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Time.Testing;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
+using SeerrFixarr.Api.Sonarr;
 using UnitsNet;
 
 namespace SeerrFixarr.Test;
@@ -32,27 +33,34 @@ internal static class TestDataBuilder
 
     public static void Reset() => _idSequence = 0;
 
-    public static Issue CreateIssueFor(MediaUnion mediaUnion)
+    public static Issue CreateIssueFor(Movie movie)
     {
         var id = GetNextId();
-        var media = mediaUnion.Match(
-            issue => issue.Movie.ToMediaIssue(),
-            issue => issue.Episode.ToMediaIssue()
-        );
-
-        var (problemSesons, problemEpisode) = mediaUnion.Match(
-            _ => (0, 0),
-            episode => (episode.Episode.SeasonNumber, episode.Episode.EpisodeNumber)
-        );
-
+        var media = movie.ToMediaIssue();
         return new Issue
         {
             Id = id,
             Status = (int)IssueStatus.Open,
             CreatedAt = FakeTimeProvider.GetLocalNow().Date,
             UpdatedAt = FakeTimeProvider.GetLocalNow().Date,
-            ProblemEpisode = problemEpisode,
-            ProblemSeason = problemSesons,
+            ProblemEpisode = 0,
+            ProblemSeason = 0,
+            Media = media,
+        };
+    }
+    
+    public static Issue CreateIssueFor(Episode episode)
+    {
+        var id = GetNextId();
+        var media = episode.ToMediaIssue();
+        return new Issue
+        {
+            Id = id,
+            Status = (int)IssueStatus.Open,
+            CreatedAt = FakeTimeProvider.GetLocalNow().Date,
+            UpdatedAt = FakeTimeProvider.GetLocalNow().Date,
+            ProblemEpisode = episode.EpisodeNumber,
+            ProblemSeason = episode.SeasonNumber,
             Media = media,
         };
     }
@@ -74,13 +82,42 @@ internal static class TestDataBuilder
 
     public static MovieFile CreateMovieFile(string title)
     {
-        var id = GetNextId();
-        return new MovieFile
-        {
-            Id = id,
-            Path = title,
-            Size = (long)Information.FromGibibytes(5).Bytes
-        };
+      var id = GetNextId();
+      return new MovieFile
+      {
+        Id = id,
+        Path = title,
+        Size = (long)Information.FromGibibytes(5).Bytes
+      };
+    }
+    
+    public static Episode CreateEpisode(string seriesTitle, int episodeNumber)
+    {
+      var id = GetNextId();
+      var seriesId = seriesTitle.ToCharArray().Select(c => (int)c).Sum();
+      return new Episode
+      {
+        Id = id,
+        SeriesId = seriesId,
+        SeasonNumber = 1,
+        EpisodeNumber = episodeNumber,
+        Title = "Test Episode",
+        TvdbId = 123456 + seriesId,
+        AirDateUtc = FakeTimeProvider.GetUtcNow().DateTime.Subtract(TimeSpan.FromDays(100)),
+        HasFile = false,
+        Monitored = true
+      };
+    }
+
+    public static EpisodeFile CreateEpisodeFile(string title)
+    {
+      var id = GetNextId();
+      return new EpisodeFile
+      {
+        Id = id,
+        Path = title,
+        Size = (long)Information.FromGibibytes(5).Bytes
+      };
     }
 
     private static int GetNextId()

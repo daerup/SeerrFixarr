@@ -10,13 +10,13 @@ using Shouldly;
 
 namespace SeerrFixarr.Test;
 
-public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _application;
     private readonly FakeOverseerrApi _overseerrApi = new();
     private readonly FakeRadarrApi _radarrApi = new();
     
-    public RadarrRunnerIntegrationTests(WebApplicationFactory<Program> application)
+    public RadarrIntegrationTests(WebApplicationFactory<Program> application)
     {
         _application = application.WithWebHostBuilder(buiilder =>
         {
@@ -27,7 +27,6 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
                 services.AddScoped<IRadarrApi, FakeRadarrApi>(_ => _radarrApi);
             });
         });
-        TestDataBuilder.Reset();
     }
 
     [Theory]
@@ -38,7 +37,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
         // Arrange
         var file = TestDataBuilder.CreateMovieFile("some.title.mkv");
         var movie = TestDataBuilder.CreateMovie("Some Title").WithFile(file);
-        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).CreatedBy(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(TestDataBuilder.TestUser, "Test comment");
 
         _radarrApi.Setup(movie);
         _overseerrApi.Setup(issue);
@@ -55,7 +54,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
         _radarrApi.Movies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(m => m.Id.ShouldBe(movie.Id),
             m => m.MovieFile.ShouldBeNull(), m => m.HasFile.ShouldBeFalse()
         );
-        await Verify(_overseerrApi.Comments);
+        await Verify(_overseerrApi.Comments.Values);
     }
 
     [Theory]
@@ -65,7 +64,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
     {
         // Arrange
         var movie = TestDataBuilder.CreateMovie("Some Title");
-        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).CreatedBy(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(TestDataBuilder.TestUser, "Test comment");
 
         _radarrApi.Setup(movie);
         _overseerrApi.Setup(issue);
@@ -82,7 +81,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
         _radarrApi.Movies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
             m => m.Id.ShouldBe(movie.Id), m => m.MovieFile.ShouldBeNull(), m => m.HasFile.ShouldBeFalse()
         );
-        await Verify(_overseerrApi.Comments);
+        await Verify(_overseerrApi.Comments.Values);
     }
 
     [Theory]
@@ -92,7 +91,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
     {
         // Arrange
         var movie = TestDataBuilder.CreateMovie("Some other Title");
-        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).CreatedBy(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(TestDataBuilder.TestUser, "Test comment");
         _radarrApi.SetupDownloading(movie);
         _overseerrApi.Setup(issue);
 
@@ -105,7 +104,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
             i => i.Id.ShouldBe(issue.Id), i => i.Status.ShouldBe((int)IssueStatus.Resolved)
         );
         _radarrApi.DownloadQueue.ShouldHaveSingleItem().ShouldSatisfyAllConditions(d => d.MovieId.ShouldBe(movie.Id));
-        await Verify(_overseerrApi.Comments);
+        await Verify(_overseerrApi.Comments.Values);
     }
 
     
@@ -114,7 +113,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
     {
         // Arrange
         var movie = TestDataBuilder.CreateMovie("Some other Title");
-        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(9999, movie)).CreatedBy(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(9999, movie)).By(TestDataBuilder.TestUser, "Test comment");
         issue = issue with { Media = issue.Media with { TmdbId = null } };
         _radarrApi.SetupDownloading(movie);
         _overseerrApi.Setup(issue);
@@ -124,7 +123,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
         
         // Assert
         response.StatusCode.ShouldNotBe(HttpStatusCode.OK);
-        await Verify(_overseerrApi.Comments);
+        await Verify(_overseerrApi.Comments.Values);
     }
 
     [Fact]
@@ -133,7 +132,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
         // Arrange
         var file = TestDataBuilder.CreateMovieFile("some.title.mkv");
         var movie = TestDataBuilder.CreateMovie("Some other Title").WithFile(file);
-        var issue = TestDataBuilder.CreateIssueFor(movie).CreatedBy(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(movie).By(TestDataBuilder.TestUser, "Test comment");
         SetUpCustomAwaitDownloadQueueUpdatedBehavior(() => _radarrApi.DownloadQueue.Clear());
         _overseerrApi.Setup(issue);
         _radarrApi.Setup(movie);
@@ -143,7 +142,7 @@ public class RadarrRunnerIntegrationTests : IClassFixture<WebApplicationFactory<
 
         // Assert
         _radarrApi.DownloadQueue.ShouldBeEmpty();
-        await Verify(_overseerrApi.Comments);
+        await Verify(_overseerrApi.Comments.Values);
     }
 
     private void SetUpCustomAwaitDownloadQueueUpdatedBehavior(Action action)
