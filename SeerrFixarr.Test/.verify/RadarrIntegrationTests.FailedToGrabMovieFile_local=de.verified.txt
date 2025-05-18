@@ -1,0 +1,13 @@
+﻿[
+  [
+    {
+      Message: 🗑️ Datei von 'Some other Title' wird gelöscht (5.37 GB)
+    },
+    {
+      Message: ✅ Filmdatei erfolgreich gelöscht (5.37 GB)
+    },
+    {
+      Message: 🥺 Datei für 'Some other Title' konnte nicht heruntergeladen werden
+    }
+  ]
+]

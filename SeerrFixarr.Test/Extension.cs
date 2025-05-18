@@ -5,11 +5,23 @@ using SeerrFixarr.App.Runners.Webhook;
 
 namespace SeerrFixarr.Test;
 
-public static class Extension
+internal record UserWithSettings(User User, UserLocalSettings Settings)
+{
+    public static implicit operator User(UserWithSettings user) => user.User;
+}
+
+internal static class Extension
 {
     public static Movie InCollection(this Movie movie, Collection collection) => movie with { Collection = collection };
     public static Movie WithFile(this Movie movie, MovieFile file) => movie with { HasFile = true, MovieFile = file };
     public static Episode WithFile(this Episode episode, EpisodeFile file) => episode with { HasFile = true, EpisodeFile = file };
+
+    public static UserWithSettings WithLocale(this User user, string locale) => new UserWithSettings(user,
+      new UserLocalSettings
+      {
+        Username = user.DisplayName,
+        Locale = locale,
+      });
 
     public static Media ToMediaIssue(this Movie movie) => new()
     {

@@ -1,0 +1,13 @@
+﻿[
+  [
+    {
+      Message: 🗑️ Deleting file of 'S01E01' (5.37 GB)
+    },
+    {
+      Message: ✅ Successfully deleted episode file for S01E01 (5.37 GB)
+    },
+    {
+      Message: 🥺 Could not grab file for 'S01E01'
+    }
+  ]
+]

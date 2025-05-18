@@ -1,0 +1,10 @@
+﻿[
+  [
+    {
+      Message: ⏩ Keine Datei für Episode S01E01 gefunden – Löschung wird übersprungen
+    },
+    {
+      Message: ⬇️ Datei 'test.episode.test.mkv' wird heruntergeladen 💾 2.15 GB 🕒 31.12.2025 14:05:57
+    }
+  ]
+]

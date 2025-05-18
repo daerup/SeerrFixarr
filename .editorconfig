@@ -10,7 +10,7 @@ trim_trailing_whitespace = false
 
 [*.{appxmanifest,asax,ascx,aspx,axaml,blockshader,build,c,c++,c++m,cc,ccm,cginc,compute,cp,cpp,cppm,cs,cshtml,cu,cuh,cxx,cxxm,dtd,fs,fsi,fsscript,fsx,fx,fxh,h,h++,hh,hlsl,hlsli,hlslinc,hp,hpp,hxx,icc,inc,inl,ino,ipp,ixx,master,ml,mli,mpp,mq4,mq5,mqh,mxx,nuspec,paml,razor,resw,resx,shader,shaderFoundry,skin,tcc,tpp,urtshader,usf,ush,uxml,vb,xaml,xamlx,xoml,xsd}]
 indent_style = space
-indent_size = 2
+indent_size = 4
 tab_width = 2
 
 [*]
@@ -58,23 +58,23 @@ dotnet_naming_rule.unity_serialized_field_rule.style = lower_camel_case_style
 dotnet_naming_rule.unity_serialized_field_rule.symbols = unity_serialized_field_symbols
 dotnet_naming_style.lower_camel_case_style.capitalization = camel_case
 dotnet_naming_style.upper_camel_case_style.capitalization = pascal_case
-dotnet_naming_symbols.constants_symbols.applicable_accessibilities = public,internal,protected,protected_internal,private_protected
+dotnet_naming_symbols.constants_symbols.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
 dotnet_naming_symbols.constants_symbols.applicable_kinds = field
 dotnet_naming_symbols.constants_symbols.required_modifiers = const
 dotnet_naming_symbols.constants_symbols.resharper_applicable_kinds = constant_field
 dotnet_naming_symbols.constants_symbols.resharper_required_modifiers = any
-dotnet_naming_symbols.public_fields_symbols.applicable_accessibilities = public,internal,protected,protected_internal,private_protected
+dotnet_naming_symbols.public_fields_symbols.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
 dotnet_naming_symbols.public_fields_symbols.applicable_kinds = field
-dotnet_naming_symbols.public_fields_symbols.resharper_applicable_kinds = field,readonly_field
+dotnet_naming_symbols.public_fields_symbols.resharper_applicable_kinds = field, readonly_field
 dotnet_naming_symbols.public_fields_symbols.resharper_required_modifiers = instance
-dotnet_naming_symbols.public_static_fields_symbols.applicable_accessibilities = public,internal,protected,protected_internal,private_protected
+dotnet_naming_symbols.public_static_fields_symbols.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
 dotnet_naming_symbols.public_static_fields_symbols.applicable_kinds = field
 dotnet_naming_symbols.public_static_fields_symbols.required_modifiers = static
 dotnet_naming_symbols.public_static_fields_symbols.resharper_applicable_kinds = field
 dotnet_naming_symbols.public_static_fields_symbols.resharper_required_modifiers = static
-dotnet_naming_symbols.static_readonly_symbols.applicable_accessibilities = public,internal,protected,protected_internal,private_protected
+dotnet_naming_symbols.static_readonly_symbols.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
 dotnet_naming_symbols.static_readonly_symbols.applicable_kinds = field
-dotnet_naming_symbols.static_readonly_symbols.required_modifiers = readonly,static
+dotnet_naming_symbols.static_readonly_symbols.required_modifiers = readonly, static
 dotnet_naming_symbols.static_readonly_symbols.resharper_applicable_kinds = readonly_field
 dotnet_naming_symbols.static_readonly_symbols.resharper_required_modifiers = static
 dotnet_naming_symbols.unity_serialized_field_symbols.applicable_accessibilities = *

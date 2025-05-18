@@ -60,7 +60,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ✅️ This issue will be closed. Reopen if the problem persists..
         /// </summary>
         internal static string CloseIssue {
             get {
@@ -69,7 +69,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ⬇️ Already grabbed file for &apos;{0}&apos;. 🕒 {1}.
         /// </summary>
         internal static string EpisodeAlreadyGrabbed {
             get {
@@ -78,7 +78,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ✅ Successfully deleted episode file for {0} ({1}).
         /// </summary>
         internal static string EpisodeDeletionFinished {
             get {
@@ -87,7 +87,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 🗑️ Deleting file of &apos;{0}&apos; ({1}).
         /// </summary>
         internal static string EpisodeDeletionStart {
             get {
@@ -96,7 +96,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ⏩ Episode file for {0} not found, skipping deletion.
         /// </summary>
         internal static string EpisodeFileNotFound {
             get {
@@ -105,7 +105,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ⬇️ Grabbed file &apos;{0}&apos; 💾 {1} 🕒 {2}.
         /// </summary>
         internal static string EpisodeGrabbed {
             get {
@@ -114,7 +114,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ❌ {0} not found, cannot automatically fix this issue.
         /// </summary>
         internal static string EpisodeNotFound {
             get {
@@ -123,7 +123,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 🥺 Could not grab file for &apos;{0}&apos;.
         /// </summary>
         internal static string ItemNotGrabbed {
             get {
@@ -132,7 +132,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ⬇️ Already grabbed file &apos;{0}. 🕒 {1}&apos;.
         /// </summary>
         internal static string MovieAlreadyGrabbed {
             get {
@@ -141,7 +141,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ✅ Successfully deleted movie file ({0}).
         /// </summary>
         internal static string MovieDeletionFinished {
             get {
@@ -150,7 +150,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 🗑️ Deleting file of &apos;{0}&apos; ({1}).
         /// </summary>
         internal static string MovieDeletionStart {
             get {
@@ -159,7 +159,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ⏩ Movie file not found for &apos;{0}&apos;, skipping deletion.
         /// </summary>
         internal static string MovieFileNotFound {
             get {
@@ -168,7 +168,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ⬇️ Grabbed file &apos;{0}&apos; 💾 {1} 🕒 {2}.
         /// </summary>
         internal static string MovieGrabbed {
             get {
@@ -177,7 +177,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 🔎 Could not find movie with id &apos;{0}&apos;.
         /// </summary>
         internal static string MovieNotFound {
             get {
@@ -186,7 +186,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ❌ Whole seasons cannot be automatically fixed. Please recreate the issue with a specific episode..
         /// </summary>
         internal static string WholeSeasonFaulty {
             get {
@@ -195,7 +195,7 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ❌ Whole shows cannot be automatically fixed. Please recreate the issue with a specific episode..
         /// </summary>
         internal static string WholeShowFaulty {
             get {

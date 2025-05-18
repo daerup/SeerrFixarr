@@ -1,0 +1,10 @@
+﻿[
+  [
+    {
+      Message: ⏩ Filmdatei für 'Some Title' nicht gefunden – Löschung wird übersprungen
+    },
+    {
+      Message: ⬇️ Datei 'some.title.test.mkv' wurde gefunden 💾 2.15 GB 🕒 31.12.2025 14:05:57
+    }
+  ]
+]

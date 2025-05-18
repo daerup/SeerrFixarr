@@ -1,0 +1,13 @@
+﻿[
+  [
+    {
+      Message: 🗑️ Datei von 'S01E01' wird gelöscht (5.37 GB)
+    },
+    {
+      Message: ✅ Episodendatei für S01E01 (5.37 GB) erfolgreich gelöscht
+    },
+    {
+      Message: 🥺 Datei für 'S01E01' konnte nicht heruntergeladen werden
+    }
+  ]
+]

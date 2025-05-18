@@ -1,0 +1,13 @@
+﻿[
+  [
+    {
+      Message: ⏩ Filmdatei für 'Some other Title' nicht gefunden – Löschung wird übersprungen
+    },
+    {
+      Message: ⬇️ Datei für 'some.other.title.test.mkv' wird bereits heruntergeladen 🕒 31.12.2025 14:05:57
+    },
+    {
+      Message: ✅️ Dieses Problem wird geschlossen. Öffnen Sie es erneut, falls es weiterhin besteht.
+    }
+  ]
+]

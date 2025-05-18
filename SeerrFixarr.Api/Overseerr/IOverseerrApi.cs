@@ -4,6 +4,9 @@ namespace SeerrFixarr.Api.Overseerr;
 
 public interface IOverseerrApi
 {
+    [Get("/user/{id}/settings/main")]
+    Task<UserLocalSettings> GetLocalSettingsOfUser([AliasAs("id")] int userId);
+    
     [Get("/issue")]
     Task<Issues> GetIssues(int take = 100, int skip = 0, string sort = "added", string filter = "all");
     

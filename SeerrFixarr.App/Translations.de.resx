@@ -6,12 +6,61 @@
     <value>1.3</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
   </resheader>
   <data name="MovieDeletionFinished" xml:space="preserve">
-    <value />
+  <value>✅ Filmdatei erfolgreich gelöscht ({0})</value>
+  </data>
+    <data name="MovieDeletionStart" xml:space="preserve">
+    <value>🗑️ Datei von '{0}' wird gelöscht ({1})</value>
+  </data>
+    <data name="MovieFileNotFound" xml:space="preserve">
+    <value>⏩ Filmdatei für '{0}' nicht gefunden – Löschung wird übersprungen</value>
+  </data>
+    <data name="MovieGrabbed" xml:space="preserve">
+    <value>⬇️ Datei '{0}' wurde gefunden 💾 {1} 🕒 {2}</value>
+  </data>
+    <data name="ItemNotGrabbed" xml:space="preserve">
+    <value>🥺 Datei für '{0}' konnte nicht heruntergeladen werden</value>
+  </data>
+    <data name="MovieAlreadyGrabbed" xml:space="preserve">
+    <value>⬇️ Datei für '{0}' wird bereits heruntergeladen 🕒 {1}</value>
+  </data>
+    <data name="MovieNotFound" xml:space="preserve">
+    <value>🔎 Film mit der ID '{0}' konnte nicht gefunden werden</value>
+  </data>
+    <data name="CloseIssue" xml:space="preserve">
+    <value>✅️ Dieses Problem wird geschlossen. Öffnen Sie es erneut, falls es weiterhin besteht.</value>
+  </data>
+    <data name="EpisodeDeletionFinished" xml:space="preserve">
+    <value>✅ Episodendatei für {0} ({1}) erfolgreich gelöscht</value>
+  </data>
+    <data name="EpisodeDeletionStart" xml:space="preserve">
+    <value>🗑️ Datei von '{0}' wird gelöscht ({1})</value>
+  </data>
+    <data name="EpisodeFileNotFound" xml:space="preserve">
+    <value>⏩ Keine Datei für Episode {0} gefunden – Löschung wird übersprungen</value>
+  </data>
+    <data name="EpisodeGrabbed" xml:space="preserve">
+    <value>⬇️ Datei '{0}' wird heruntergeladen 💾 {1} 🕒 {2}</value>
+  </data>
+    <data name="EpisodeAlreadyGrabbed" xml:space="preserve">
+    <value>⬇️ Datei für '{0}' wird bereits heruntergeladen 🕒 {1}</value>
+  </data>
+    <data name="EpisodeNotFound" xml:space="preserve">
+    <value>❌ {0} konnte nicht gefunden werden – dieses Problem kann nicht automatisch behoben werden</value>
+  </data>
+    <data name="WholeSeasonFaulty" xml:space="preserve">
+    <value>❌ Ganze Staffeln können nicht automatisch behoben werden. Bitte erstellen Sie das Problem neu mit einer bestimmten Episode.</value>
+  </data>
+    <data name="WholeShowFaulty" xml:space="preserve">
+    <value>❌ Ganze Serien können nicht automatisch behoben werden. Bitte erstellen Sie das Problem neu mit einer bestimmten Episode.</value>
   </data>
 </root>

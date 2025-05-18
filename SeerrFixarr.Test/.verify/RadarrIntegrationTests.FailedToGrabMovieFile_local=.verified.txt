@@ -1,0 +1,13 @@
+﻿[
+  [
+    {
+      Message: 🗑️ Deleting file of 'Some other Title' (5.37 GB)
+    },
+    {
+      Message: ✅ Successfully deleted movie file (5.37 GB)
+    },
+    {
+      Message: 🥺 Could not grab file for 'Some other Title'
+    }
+  ]
+]

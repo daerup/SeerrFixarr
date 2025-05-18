@@ -5,7 +5,14 @@ namespace SeerrFixarr.Test;
 internal class FakeOverseerrApi : IOverseerrApi
 {
     internal readonly List<Issue> Issues = [];
-    internal readonly Dictionary<int, List<Comment>> Comments = new();
+    internal readonly Dictionary<int, UserLocalSettings> LocaleSettings = [];
+    internal readonly Dictionary<int, List<Comment>> Comments =  [];
+
+    public Task<UserLocalSettings> GetLocalSettingsOfUser(int userId)
+    {
+        if (LocaleSettings.TryGetValue(userId, out var settings)) return Task.FromResult(settings);
+        throw new InvalidOperationException($"User with id {userId} not found");
+    }
 
     public Task<Issues> GetIssues(int take = 100, int skip = 0, string sort = "added", string filter = "all")
     {
@@ -62,5 +69,10 @@ internal class FakeOverseerrApi : IOverseerrApi
         if (Issues.Any(i => i.Id == issue.Id))
             throw new InvalidOperationException($"Issue with id {issue.Id} already exists");
         Issues.Add(issue);
+    }
+    
+    public void Setup(UserWithSettings user)
+    {
+      LocaleSettings[user.User.Id] = user.Settings;
     }
 }

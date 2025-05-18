@@ -18,52 +18,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EpisodeDeletionFinished" xml:space="preserve">
-    <value />
-  </data>
-  <data name="MovieDeletionFinished" xml:space="preserve">
-    <value />
+   <data name="MovieDeletionFinished" xml:space="preserve">
+    <value>✅ Successfully deleted movie file ({0})</value>
   </data>
   <data name="MovieDeletionStart" xml:space="preserve">
-    <value />
+    <value>🗑️ Deleting file of '{0}' ({1})</value>
   </data>
   <data name="MovieFileNotFound" xml:space="preserve">
-    <value />
+    <value>⏩ Movie file not found for '{0}', skipping deletion</value>
   </data>
   <data name="MovieGrabbed" xml:space="preserve">
-    <value />
+    <value>⬇️ Grabbed file '{0}' 💾 {1} 🕒 {2}</value>
   </data>
   <data name="ItemNotGrabbed" xml:space="preserve">
-    <value />
+    <value>🥺 Could not grab file for '{0}'</value>
   </data>
   <data name="MovieAlreadyGrabbed" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CloseIssue" xml:space="preserve">
-    <value />
+    <value>⬇️ Already grabbed file '{0}. 🕒 {1}'</value>
   </data>
   <data name="MovieNotFound" xml:space="preserve">
-    <value />
+    <value>🔎 Could not find movie with id '{0}'</value>
+  </data>
+  <data name="CloseIssue" xml:space="preserve">
+    <value>✅️ This issue will be closed. Reopen if the problem persists.</value>
+  </data>
+  <data name="EpisodeDeletionFinished" xml:space="preserve">
+    <value>✅ Successfully deleted episode file for {0} ({1})</value>
   </data>
   <data name="EpisodeDeletionStart" xml:space="preserve">
-    <value />
+    <value>🗑️ Deleting file of '{0}' ({1})</value>
   </data>
   <data name="EpisodeFileNotFound" xml:space="preserve">
-    <value />
+    <value>⏩ Episode file for {0} not found, skipping deletion</value>
   </data>
   <data name="EpisodeGrabbed" xml:space="preserve">
-    <value />
+    <value>⬇️ Grabbed file '{0}' 💾 {1} 🕒 {2}</value>
   </data>
   <data name="EpisodeAlreadyGrabbed" xml:space="preserve">
-    <value />
+    <value>⬇️ Already grabbed file for '{0}'. 🕒 {1}</value>
   </data>
   <data name="EpisodeNotFound" xml:space="preserve">
-    <value />
+    <value>❌ {0} not found, cannot automatically fix this issue</value>
   </data>
   <data name="WholeSeasonFaulty" xml:space="preserve">
-    <value />
+    <value>❌ Whole seasons cannot be automatically fixed. Please recreate the issue with a specific episode.</value>
   </data>
   <data name="WholeShowFaulty" xml:space="preserve">
-    <value />
+    <value>❌ Whole shows cannot be automatically fixed. Please recreate the issue with a specific episode.</value>
   </data>
 </root>

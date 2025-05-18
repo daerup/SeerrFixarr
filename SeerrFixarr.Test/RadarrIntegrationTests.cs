@@ -15,7 +15,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
     private readonly WebApplicationFactory<Program> _application;
     private readonly FakeOverseerrApi _overseerrApi = new();
     private readonly FakeRadarrApi _radarrApi = new();
-    
+
     public RadarrIntegrationTests(WebApplicationFactory<Program> application)
     {
         _application = application.WithWebHostBuilder(buiilder =>
@@ -29,18 +29,21 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         });
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData(9999)]
-    public async Task RedownloadFaultyMovie(int? idOverride)
+    [Theory, CombinatorialData]
+    public async Task RedownloadFaultyMovie(
+        [CombinatorialValues(null, 9999)] int? idOverride,
+        [CombinatorialValues("en", "de", "zh", "")]
+        string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var file = TestDataBuilder.CreateMovieFile("some.title.mkv");
         var movie = TestDataBuilder.CreateMovie("Some Title").WithFile(file);
-        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(testUser, "Test comment");
 
         _radarrApi.Setup(movie);
         _overseerrApi.Setup(issue);
+        _overseerrApi.Setup(testUser);
 
         // Act
         var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
@@ -57,17 +60,20 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         await Verify(_overseerrApi.Comments.Values);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData(9999)]
-    public async Task DownloadMovie(int? idOverride)
+    [Theory, CombinatorialData]
+    public async Task DownloadMovie(
+        [CombinatorialValues(null, 9999)] int? idOverride,
+        [CombinatorialValues("en", "de", "zh", "")]
+        string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var movie = TestDataBuilder.CreateMovie("Some Title");
-        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(testUser, "Test comment");
 
         _radarrApi.Setup(movie);
         _overseerrApi.Setup(issue);
+        _overseerrApi.Setup(testUser);
 
         // Act
         var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
@@ -84,16 +90,21 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         await Verify(_overseerrApi.Comments.Values);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData(9999)]
-    public async Task DownloadAlreadyInProgress(int? idOverride)
+
+    [Theory, CombinatorialData]
+    public async Task DownloadAlreadyInProgress(
+        [CombinatorialValues(null, 9999)] int? idOverride,
+        [CombinatorialValues("en", "de", "zh", "")]
+        string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var movie = TestDataBuilder.CreateMovie("Some other Title");
-        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(idOverride, movie)).By(testUser, "Test comment");
+        
         _radarrApi.SetupDownloading(movie);
         _overseerrApi.Setup(issue);
+        _overseerrApi.Setup(testUser);
 
         // Act
         var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
@@ -107,35 +118,41 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         await Verify(_overseerrApi.Comments.Values);
     }
 
-    
-    [Fact]
-    public async Task TmdbIdFallbackFailureResultsInError()
+
+    [Theory, CombinatorialData]
+    public async Task TmdbIdFallbackFailureResultsInError([CombinatorialValues("en", "de", "zh", "")] string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var movie = TestDataBuilder.CreateMovie("Some other Title");
-        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(9999, movie)).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(GetMovieIdOverride(9999, movie)).By(testUser, "Test comment");
         issue = issue with { Media = issue.Media with { TmdbId = null } };
+
         _radarrApi.SetupDownloading(movie);
         _overseerrApi.Setup(issue);
-        
+        _overseerrApi.Setup(testUser);
+
         // Act
         var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
-        
+
         // Assert
         response.StatusCode.ShouldNotBe(HttpStatusCode.OK);
         await Verify(_overseerrApi.Comments.Values);
     }
 
-    [Fact]
-    public async Task FailedToGrabMovieFile()
+    [Theory, CombinatorialData]
+    public async Task FailedToGrabMovieFile([CombinatorialValues("en", "de", "zh", "")] string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var file = TestDataBuilder.CreateMovieFile("some.title.mkv");
         var movie = TestDataBuilder.CreateMovie("Some other Title").WithFile(file);
-        var issue = TestDataBuilder.CreateIssueFor(movie).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(movie).By(testUser, "Test comment");
         SetUpCustomAwaitDownloadQueueUpdatedBehavior(() => _radarrApi.DownloadQueue.Clear());
+
         _overseerrApi.Setup(issue);
         _radarrApi.Setup(movie);
+        _overseerrApi.Setup(testUser);
 
         // Act
         await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());

@@ -35,6 +35,7 @@
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
         <PackageReference Include="Shouldly" Version="4.3.0" />
         <PackageReference Include="Verify.XunitV3" Version="30.1.0" />
+        <PackageReference Include="Xunit.Combinatorial" Version="2.0.24" />
         <PackageReference Include="xunit.v3" Version="2.0.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0"/>
     </ItemGroup>
@@ -42,6 +43,10 @@
     <ItemGroup>
         <ProjectReference Include="..\SeerrFixarr.Api\SeerrFixarr.Api.csproj"/>
         <ProjectReference Include="..\SeerrFixarr.App\SeerrFixarr.App.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include=".verify\" />
     </ItemGroup>
 
 </Project>

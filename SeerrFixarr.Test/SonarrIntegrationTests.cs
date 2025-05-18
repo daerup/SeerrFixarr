@@ -15,7 +15,7 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
     private readonly WebApplicationFactory<Program> _application;
     private readonly FakeOverseerrApi _overseerrApi = new();
     private readonly FakeSonarrApi _sonarrApi = new();
-    
+
     public SonarrIntegrationTests(WebApplicationFactory<Program> application)
     {
         _application = application.WithWebHostBuilder(buiilder =>
@@ -29,16 +29,18 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         });
     }
 
-    [Fact]
-    public async Task RedownloadFaultyEpisode()
+    [Theory, CombinatorialData]
+    public async Task RedownloadFaultyEpisode([CombinatorialValues("en", "de", "zh", "")] string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var file = TestDataBuilder.CreateEpisodeFile("some.episode.mkv");
         var episode = TestDataBuilder.CreateEpisode("Some Show", 1).WithFile(file);
-        var issue = TestDataBuilder.CreateIssueFor(episode).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(episode).By(testUser, "Test comment");
 
         _sonarrApi.Setup(episode);
         _overseerrApi.Setup(issue);
+        _overseerrApi.Setup(testUser);
 
         // Act
         var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
@@ -48,22 +50,25 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Issues.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
             i => i.Id.ShouldBe(issue.Id), i => i.Status.ShouldBe((int)IssueStatus.Resolved)
         );
-        _sonarrApi.DownloadQueue.ShouldHaveSingleItem().ShouldSatisfyAllConditions(d => d.EpisodeId.ShouldBe(episode.Id));
+        _sonarrApi.DownloadQueue.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(d => d.EpisodeId.ShouldBe(episode.Id));
         _sonarrApi.Episodes.ShouldHaveSingleItem().ShouldSatisfyAllConditions(m => m.Id.ShouldBe(episode.Id),
             m => m.EpisodeFile.ShouldBeNull(), m => m.HasFile.ShouldBeFalse()
         );
         await Verify(_overseerrApi.Comments.Values);
     }
-    
-    [Fact]
-    public async Task DownloadEpisode()
+
+    [Theory, CombinatorialData]
+    public async Task DownloadEpisode([CombinatorialValues("en", "de", "zh", "")] string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var episode = TestDataBuilder.CreateEpisode("Some Show", 1);
-        var issue = TestDataBuilder.CreateIssueFor(episode).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(episode).By(testUser, "Test comment");
 
         _sonarrApi.Setup(episode);
         _overseerrApi.Setup(issue);
+        _overseerrApi.Setup(testUser);
 
         // Act
         var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
@@ -73,21 +78,25 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Issues.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
             i => i.Id.ShouldBe(issue.Id), i => i.Status.ShouldBe((int)IssueStatus.Resolved)
         );
-        _sonarrApi.DownloadQueue.ShouldHaveSingleItem().ShouldSatisfyAllConditions(d => d.EpisodeId.ShouldBe(episode.Id));
+        _sonarrApi.DownloadQueue.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(d => d.EpisodeId.ShouldBe(episode.Id));
         _sonarrApi.Episodes.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
             m => m.Id.ShouldBe(episode.Id), m => m.EpisodeFile.ShouldBeNull(), m => m.HasFile.ShouldBeFalse()
         );
         await Verify(_overseerrApi.Comments.Values);
     }
 
-    [Fact]
-    public async Task DownloadAlreadyInProgress()
+    [Theory, CombinatorialData]
+    public async Task DownloadAlreadyInProgress([CombinatorialValues("en", "de", "zh", "")] string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var episode = TestDataBuilder.CreateEpisode("Some other Show", 1);
-        var issue = TestDataBuilder.CreateIssueFor(episode).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(episode).By(testUser, "Test comment");
+
         _sonarrApi.SetupDownloading(episode);
         _overseerrApi.Setup(issue);
+        _overseerrApi.Setup(testUser);
 
         // Act
         var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
@@ -97,20 +106,24 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Issues.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
             i => i.Id.ShouldBe(issue.Id), i => i.Status.ShouldBe((int)IssueStatus.Resolved)
         );
-        _sonarrApi.DownloadQueue.ShouldHaveSingleItem().ShouldSatisfyAllConditions(d => d.EpisodeId.ShouldBe(episode.Id));
+        _sonarrApi.DownloadQueue.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(d => d.EpisodeId.ShouldBe(episode.Id));
         await Verify(_overseerrApi.Comments.Values);
     }
-    
-    [Fact]
-    public async Task FailedToGrabEpisodeFile()
+
+    [Theory, CombinatorialData]
+    public async Task FailedToGrabEpisodeFile([CombinatorialValues("en", "de", "zh", "")] string local)
     {
         // Arrange
+        var testUser = TestDataBuilder.TestUser.WithLocale(local);
         var file = TestDataBuilder.CreateEpisodeFile("some.episode.mkv");
         var episode = TestDataBuilder.CreateEpisode("Some other Show", 1).WithFile(file);
-        var issue = TestDataBuilder.CreateIssueFor(episode).By(TestDataBuilder.TestUser, "Test comment");
+        var issue = TestDataBuilder.CreateIssueFor(episode).By(testUser, "Test comment");
         SetUpCustomAwaitDownloadQueueUpdatedBehavior(() => _sonarrApi.DownloadQueue.Clear());
+
         _overseerrApi.Setup(issue);
         _sonarrApi.Setup(episode);
+        _overseerrApi.Setup(testUser);
 
         // Act
         await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
