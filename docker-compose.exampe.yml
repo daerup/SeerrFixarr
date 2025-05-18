@@ -1,0 +1,49 @@
+networks:
+  media:
+    driver: bridge
+
+services:
+  SeerrFixarr:
+    container_name: seerrfixarr
+    hostname: seerrfixarr
+    environment:
+      TZ: ${TZ}
+      OVERSEERR__APIURL: http://overseerr:5055/api/v1
+      OVERSEERR__APIKEY: ${OVERSEERR_API_KEY}
+      RADARR__APIURL: http://radarr:7878/api/v3
+      RADARR__APIKEY: ${RADARR_API_KEY}
+      SONARR__APIURL: http://sonarr:8989/api/v3
+      SONARR__APIKEY: ${SONARR_API_KEY}
+    networks:
+      - media
+    depends_on:
+        - overseerr
+        - sonarr
+        - radarr
+    image: "ghcr.io/daerup/seerrfixarr:latest"
+
+  sonarr:
+    container_name: sonarr
+    hostname: sonarr
+    restart: unless-stopped
+    networks:
+      - media
+    image: "ghcr.io/linuxserver/sonarr:latest"
+
+  radarr:
+    container_name: radarr
+    hostname: radarr
+    restart: unless-stopped
+    networks:
+      - media
+    image: "ghcr.io/linuxserver/radarr:latest"
+
+  overseerr:
+    container_name: overseerr
+    hostname: overseerr
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+    networks:
+      - media
+    image: "ghcr.io/linuxserver/overseerr:latest"

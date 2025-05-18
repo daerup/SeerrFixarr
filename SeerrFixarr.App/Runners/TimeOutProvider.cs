@@ -10,7 +10,7 @@ internal class TimeOutProvider : ITimeOutProvider
 {
     public Task AwaitDownloadQueueUpdated()
     {
-        return Task.Delay(TimeSpan.FromSeconds(10));
+        return Task.Delay(TimeSpan.FromSeconds(15));
     }
     
     public Task AwaitFileDeletion()

@@ -4,3 +4,5 @@
     build:
       context: .
       dockerfile: SeerrFixarr.App/Dockerfile
+
+
