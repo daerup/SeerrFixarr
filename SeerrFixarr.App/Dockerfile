@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:10.0-preview AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS base
 USER $APP_UID
 WORKDIR /app
 
