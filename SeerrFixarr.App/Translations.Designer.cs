@@ -71,18 +71,63 @@ namespace SeerrFixarr.App {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string EpisodeDeleted {
+        internal static string EpisodeAlreadyGrabbed {
             get {
-                return ResourceManager.GetString("EpisodeDeleted", resourceCulture);
+                return ResourceManager.GetString("EpisodeAlreadyGrabbed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string MovieAlreadyDeleted {
+        internal static string EpisodeDeletionFinished {
             get {
-                return ResourceManager.GetString("MovieAlreadyDeleted", resourceCulture);
+                return ResourceManager.GetString("EpisodeDeletionFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string EpisodeDeletionStart {
+            get {
+                return ResourceManager.GetString("EpisodeDeletionStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string EpisodeFileNotFound {
+            get {
+                return ResourceManager.GetString("EpisodeFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string EpisodeGrabbed {
+            get {
+                return ResourceManager.GetString("EpisodeGrabbed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string EpisodeNotFound {
+            get {
+                return ResourceManager.GetString("EpisodeNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string ItemNotGrabbed {
+            get {
+                return ResourceManager.GetString("ItemNotGrabbed", resourceCulture);
             }
         }
         
@@ -116,6 +161,15 @@ namespace SeerrFixarr.App {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string MovieFileNotFound {
+            get {
+                return ResourceManager.GetString("MovieFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string MovieGrabbed {
             get {
                 return ResourceManager.GetString("MovieGrabbed", resourceCulture);
@@ -134,9 +188,18 @@ namespace SeerrFixarr.App {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string MovieNotGrabbed {
+        internal static string WholeSeasonFaulty {
             get {
-                return ResourceManager.GetString("MovieNotGrabbed", resourceCulture);
+                return ResourceManager.GetString("WholeSeasonFaulty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string WholeShowFaulty {
+            get {
+                return ResourceManager.GetString("WholeShowFaulty", resourceCulture);
             }
         }
     }

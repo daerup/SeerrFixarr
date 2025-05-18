@@ -83,31 +83,3 @@ public class RadarrRunner(
     await overseerr.PostIssueComment(issue.Id, file.DeletionFinishedMessage());
   }
 }
-
-internal static class TranslationExtensions
-{
-  internal static string CloseMessage(this Issue _) => Translations.CloseIssue;
-
-  internal static string MovieNotFoundMessage(this Issue issue) =>
-    string.Format(Translations.MovieNotFound, issue.Media.Id);
-
-  internal static string AlreadyGrabbedMessage(this MovieDownload movie) =>
-    string.Format(Translations.MovieAlreadyGrabbed, movie.Title, movie.EstimatedCompletionTime.ToLocalTime(),
-      movie.EstimatedCompletionTime.ToLocalTime());
-
-  internal static string GrabbedMessage(this MovieDownload movie) =>
-    string.Format(Translations.MovieGrabbed, movie.Title, movie.GetReadableFileSize(),
-      movie.EstimatedCompletionTime.ToLocalTime());
-
-  internal static string NotGrabbedMessage(this Movie movie) =>
-    string.Format(Translations.MovieNotGrabbed, movie.Title);
-
-  internal static string NoFileToDeleteMessage(this Movie movie) =>
-    string.Format(Translations.MovieAlreadyDeleted, movie.Title);
-
-  internal static string DeletionStartedMessage(this Movie movie, MovieFile file) =>
-    string.Format(Translations.MovieDeletionStart, movie.Title, file.GetReadableFileSize());
-
-  internal static string DeletionFinishedMessage(this MovieFile file) =>
-    string.Format(Translations.MovieDeletionFinished, file.GetReadableFileSize());
-}

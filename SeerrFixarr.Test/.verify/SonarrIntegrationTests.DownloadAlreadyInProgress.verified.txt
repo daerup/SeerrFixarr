@@ -1,10 +1,10 @@
 ﻿[
   [
     {
-      Message: ⏩ Episode file not found for 'S01E01', skipping deletion
+      Message: ⏩ Episode file for S01E01 not found, skipping deletion
     },
     {
-      Message: ⬇️ Already grabbed file for 'S01E01'. 🕒 31.12.2025 14:05:57'
+      Message: ⬇️ Already grabbed file for 'S01E01'. 🕒 31.12.2025 14:05:57
     },
     {
       Message: ✅️ This issue will be closed. Reopen if the problem persists.

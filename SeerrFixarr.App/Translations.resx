@@ -18,7 +18,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EpisodeDeleted" xml:space="preserve">
+  <data name="EpisodeDeletionFinished" xml:space="preserve">
     <value />
   </data>
   <data name="MovieDeletionFinished" xml:space="preserve">
@@ -27,13 +27,13 @@
   <data name="MovieDeletionStart" xml:space="preserve">
     <value />
   </data>
-  <data name="MovieAlreadyDeleted" xml:space="preserve">
+  <data name="MovieFileNotFound" xml:space="preserve">
     <value />
   </data>
   <data name="MovieGrabbed" xml:space="preserve">
     <value />
   </data>
-  <data name="MovieNotGrabbed" xml:space="preserve">
+  <data name="ItemNotGrabbed" xml:space="preserve">
     <value />
   </data>
   <data name="MovieAlreadyGrabbed" xml:space="preserve">
@@ -43,6 +43,27 @@
     <value />
   </data>
   <data name="MovieNotFound" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EpisodeDeletionStart" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EpisodeFileNotFound" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EpisodeGrabbed" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EpisodeAlreadyGrabbed" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EpisodeNotFound" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WholeSeasonFaulty" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WholeShowFaulty" xml:space="preserve">
     <value />
   </data>
 </root>

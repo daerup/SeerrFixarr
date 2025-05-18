@@ -1,7 +1,7 @@
 ﻿[
   [
     {
-      Message: ⏩ Episode file not found for 'S01E01', skipping deletion
+      Message: ⏩ Episode file for S01E01 not found, skipping deletion
     },
     {
       Message: ⬇️ Grabbed file 'test.episode.test.mkv' 💾 2.15 GB 🕒 31.12.2025 14:05:57

@@ -1,6 +1,7 @@
 using CSharpFunctionalExtensions;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Sonarr;
+using SeerrFixarr.App.Runners.Radarr;
 
 namespace SeerrFixarr.App.Runners.Sonarr;
 
@@ -32,24 +33,21 @@ public class
       async () => await SkipFixing(issue, seasonEpisodeString));
   }
 
-  private async Task SkipFixing(Issue issue, string seasonEpisodeString)
+  private async Task SkipFixing(Issue issue, string episodeIdentifier)
   {
-    await overseerr.PostIssueComment(issue.Id,
-      @$"❌ {seasonEpisodeString} not found, cannot automatically fix this issue");
+    await overseerr.PostIssueComment(issue.Id, TranslationExtensions.EpisodeNotFoundMessage(episodeIdentifier));
     await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
   }
 
   private async Task HandleAllSeasons(Issue issue)
   {
-    await overseerr.PostIssueComment(issue.Id,
-      @"❌ Whole shows cannot be automatically fixed. Please recreate the issue with a specific episode.");
+    await overseerr.PostIssueComment(issue.Id, TranslationExtensions.WholeShowFaultyMessage());
     await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
   }
 
   private async Task HandleWholeSeason(Issue issue)
   {
-    await overseerr.PostIssueComment(issue.Id,
-      @"❌ Whole seasons cannot be automatically fixed. Please recreate the issue with a specific episode.");
+    await overseerr.PostIssueComment(issue.Id, TranslationExtensions.WholeSeasonFaultyMessage());
     await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
   }
 
@@ -89,22 +87,21 @@ public class
     var grabbed = (await sonarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
     await grabbed.Match(
       async f => await Grabbed(issue, f),
-      async () => await overseerr.PostIssueComment(issue.Id, @$"🥺 Could not grab file of '{issue.GetIdentifier()}'")
+      async () => await overseerr.PostIssueComment(issue.Id, TranslationExtensions.EpisodeNotGrabbedMessage(issue.GetIdentifier()))
     );
   }
 
   private async Task HandleDownloadAlreadyInProgress(Issue issue, EpisodeDownload alreadyGrabbed)
   {
     var episodeIdentifier = issue.GetIdentifier();
-    await overseerr.PostIssueComment(issue.Id, @$"⬇️ Already grabbed file for '{episodeIdentifier}'. 🕒 {alreadyGrabbed.EstimatedCompletionTime.ToLocalTime()}'");
-    await overseerr.PostIssueComment(issue.Id, @"✅️ This issue will be closed. Reopen if the problem persists.");
+    await overseerr.PostIssueComment(issue.Id, alreadyGrabbed.AlreadyGrabbedMessage(episodeIdentifier));
+    await overseerr.PostIssueComment(issue.Id, issue.CloseMessage());
     await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
   }
 
   private async Task Grabbed(Issue issue, EpisodeDownload file)
   {
-    var comment = @$"⬇️ Grabbed file '{file.Title}' 💾 {file.GetReadableFileSize()} 🕒 {file.EstimatedCompletionTime.ToLocalTime()}";
-    await overseerr.PostIssueComment(issue.Id, comment);
+    await overseerr.PostIssueComment(issue.Id, file.GrabbedMessage());
     await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
   }
 
@@ -113,14 +110,14 @@ public class
     var identifier = issue.GetIdentifier();
     await episodeFile.Match(
       async file => await DeleteFile(issue, file, identifier),
-      async () => await overseerr.PostIssueComment(issue.Id, @$"⏩ Episode file not found for '{identifier}', skipping deletion")
+      async () => await overseerr.PostIssueComment(issue.Id, TranslationExtensions.NoEpisodeFileToDeleteMessage(identifier))
     );
   }
 
   private async Task DeleteFile(Issue issue, EpisodeFile file, string episodeIdentifier)
   {
-    await overseerr.PostIssueComment(issue.Id, @$"🗑️ Deleting file of '{episodeIdentifier}' ({file.GetReadableFileSize()})");
+    await overseerr.PostIssueComment(issue.Id, file.DeletionStartedMessage(episodeIdentifier));
     await sonarr.DeleteEpisodeFile(file.Id);
-    await overseerr.PostIssueComment(issue.Id, @$"✅ Successfully deleted episode file ({file.GetReadableFileSize()})");
+    await overseerr.PostIssueComment(issue.Id, file.DeletionFinishedMessage(episodeIdentifier));
   }
 }
