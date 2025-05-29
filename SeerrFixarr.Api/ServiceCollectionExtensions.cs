@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
             .ConfigureApiClient<SeerrFixarrSettings>(settings => settings.Overseerr);
     }
     
-    private static void ConfigureApiClient<TSettings>(this IHttpClientBuilder builder, Func<TSettings, ApiSettings> configSelector) where TSettings : class
+    private static void ConfigureApiClient<TSettings>(this IHttpClientBuilder builder, Func<TSettings, ApiSettings> configSelector) where TSettings : class, new()
     {
         builder.ConfigureHttpClient((serviceProvider, client) =>
         {

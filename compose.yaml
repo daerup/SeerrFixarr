@@ -1,8 +1,18 @@
 ﻿services:
-  seerrfixarr.app:
-    image: seerrfixarr.app
+  seerrfixarr:
+    container_name: SeerrFixarr-dev
+    environment:
+      OVERSEERR__APIURL: ${OVERSEERR_APIURL}
+      OVERSEERR__APIKEY: ${OVERSEERR_API_KEY}
+      RADARR__APIURL: ${RADARR_APIURL}
+      RADARR__APIKEY: ${RADARR_API_KEY}
+      SONARR__APIURL: ${SONARR_APIURL}
+      SONARR__APIKEY: ${SONARR_API_KEY}
+    ports:
+      - 6969:8080
     build:
       context: .
       dockerfile: SeerrFixarr.App/Dockerfile
+    image: seerrfixarr.app
 
 

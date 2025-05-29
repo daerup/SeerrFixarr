@@ -57,3 +57,4 @@ nunit-*.xml
 *.received.*
 *.received/
 *.idea/
+*.env
