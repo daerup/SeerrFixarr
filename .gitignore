@@ -56,3 +56,4 @@ nunit-*.xml
 # Verify
 *.received.*
 *.received/
+*.idea/
