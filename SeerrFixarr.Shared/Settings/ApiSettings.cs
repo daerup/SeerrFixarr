@@ -2,8 +2,8 @@ namespace SeerrFixarr.Shared.Settings;
 
 public record ApiSettings
 {
-    public required string ApiKey { get; init; }
-    public required string ApiUrl { get; init; }
+    public string ApiKey { get; init; } = null!;
+    public string ApiUrl { get; init; } = null!;
 
     public void Deconstruct(out string apiurl, out string apikey)
     {

@@ -2,7 +2,7 @@ namespace SeerrFixarr.Shared.Settings;
 
 public record SeerrFixarrSettings
 {
-    public required ApiSettings Overseerr { get; init; }
-    public required ApiSettings Radarr { get; init; }
-    public required ApiSettings Sonarr { get; init; }
+    public ApiSettings Overseerr { get; init; } = null!;
+    public ApiSettings Radarr { get; init; } = null!;
+    public ApiSettings Sonarr { get; init; } = null!;
 }
