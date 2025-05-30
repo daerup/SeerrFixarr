@@ -28,6 +28,7 @@
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.1-dev-00953" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.1" />
+        <PackageReference Include="Sysinfocus.AspNetCore.Components" Version="0.0.3.1" />
         <PackageReference Include="UnitsNet" Version="6.0.0-pre014" />
     </ItemGroup>
     <ItemGroup>
