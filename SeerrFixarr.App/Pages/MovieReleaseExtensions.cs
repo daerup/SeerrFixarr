@@ -9,9 +9,12 @@ internal static class MovieReleaseExtensions
     {
         Log.Information("Fetching");
         await Task.Delay(2000); // simulate API delay
+        // await Task.Delay(800000); // simulate API delay
         Log.Information("Fetched");
 
-        return Enumerable.Range(0, new Random().Next(1, 10)) // Random number of releases between 1 and 10
+        var length = new Random().Next(10, 100);
+        // var length = 0;
+        return Enumerable.Range(0, length) // Random number of releases between 1 and 10
             .Select(_ => MovieRelease(movieId))
             .ToArray();
     }

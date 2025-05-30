@@ -3,6 +3,7 @@
 @inject Initialization Init
 
 <head>
+    <link href="css/site.css" rel="stylesheet" />
     <link rel="stylesheet" href="@Assets["_content/Sysinfocus.AspNetCore.Components/styles.css"]"/>
     <link rel="stylesheet"
           href="@Assets["_content/Sysinfocus.AspNetCore.Components/Sysinfocus.AspNetCore.Components.bundle.scp.css"]"/>
@@ -10,19 +11,17 @@
 </head>
 
 
-<body class="dark">
-    <div @onclick="Init.HandleMainLayoutClickEvent">
-        @Body
-    </div>
-    <script src="_framework/blazor.server.js"></script>
+<body class="dark centered-body">
+<div class="centered-content" @onclick="Init.HandleMainLayoutClickEvent">
+    @Body
+</div>
+<script src="_framework/blazor.server.js"></script>
 </body>
 
 @code
 {
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // This initializes the theme for the components.
-        // Then you can use init.ToggleTheme() to toggle between light and dark modes.    
         if (firstRender) await Init.InitializeTheme();
     }
 }

@@ -3,29 +3,67 @@
 @using SeerrFixarr.Api.Radarr
 @inject IRadarrApi RadarrApi
 
-<h3>Movie Releases for ID: @Identifier</h3>
-
 @if (Releases == null)
 {
-    <p class="text-danger">Loading</p>
+    @if (!string.IsNullOrEmpty(SelectedLottieUrl))
+    {
+        <Lottie Source="@SelectedLottieUrl"/>
+    }
 }
 else if (Releases.Length == 0)
 {
-    <p class="text-danger">No releases found.</p>
+    <Alert Icon="warning" Title="Warning..." Description="No releases found for this movie." Type="AlertType.Warning"/>
 }
 else
 {
-    <p class="text-danger">Found @Releases.Length releases:</p>
+    <DataTable Items="Releases">
+        <DataColumns>
+            <DataTableColumn Header="Title" Property="x => x.Title"></DataTableColumn>
+            <DataTableColumn Header="Score" Property="x => x.CustomFormatScore"></DataTableColumn>
+            <DataTableColumn Header="Language" Property="x => x.Languages" Width="15px">
+                <Template>
+                    @switch(context.Languages.Count)
+                    {
+                        case 0:
+                            <span class="text-muted">No languages</span>
+                            break;
+                        case 1:
+                            <Button Text="@context.Languages[0].Name" Disabled Type="ButtonType.Outline" />
+                            break;
+                        default:
+                            <Tooltip Tip="@string.Join(Environment.NewLine, context.Languages.Select(l => l.Name))" TipWidth="10px" ShowBelow>
+                                <Button Text="Multi-language" Disabled Type="ButtonType.Outline"/>
+                            </Tooltip>
+                            break;
+                    }
+
+                </Template>
+                
+            </DataTableColumn>
+        </DataColumns>
+    </DataTable>
 }
 
 @code {
     [Parameter] public string Identifier { get; set; } = null!;
-
     private MovieRelease[]? Releases { get; set; }
+    private string SelectedLottieUrl { get; set; } = "";
 
-    protected override async Task OnParametersSetAsync()
+    private readonly string[] LottieUrls =
+    [
+        "https://lottie.host/a627b5c0-0ab3-4c49-93bb-a932abad340c/0Gqo2a9cNJ.json", // Among Us
+        "https://lottie.host/71193800-a90c-4077-9b4f-14d2500ab554/e6fEgiQUvj.json" // Dinosaur
+    ];
+
+    protected override void OnAfterRender(bool firstRender)
     {
-        await LoadReleasesAsync();
+        SelectedLottieUrl = LottieUrls[new Random().Next(LottieUrls.Length)];
+        StateHasChanged();
+    }
+
+    protected override void OnParametersSet()
+    {
+        _ = LoadReleasesAsync();
     }
 
     private async Task LoadReleasesAsync()
@@ -37,7 +75,7 @@ else
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error loading releases: {ex.Message}");
+            await Console.Error.WriteLineAsync($"Error loading releases: {ex.Message}");
             Releases = [];
         }
         finally

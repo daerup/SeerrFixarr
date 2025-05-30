@@ -1,0 +1,13 @@
+.centered-body {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    padding-top: 5vh;
+}
+
+.centered-content {
+    min-width: 80vw;
+    justify-content: center;
+    display: flex;
+}
