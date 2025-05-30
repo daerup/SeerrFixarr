@@ -1,7 +1,6 @@
 using CSharpFunctionalExtensions;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Sonarr;
-using SeerrFixarr.App.Runners.Radarr;
 using Serilog;
 
 namespace SeerrFixarr.App.Runners.Sonarr;
@@ -36,19 +35,19 @@ public class
 
     private async Task SkipFixing(Issue issue, string episodeIdentifier)
     {
-        await overseerr.PostIssueComment(issue.Id, TranslationExtensions.EpisodeNotFoundMessage(episodeIdentifier));
+        await overseerr.PostIssueComment(issue.Id, ShowTranslationExtensions.EpisodeNotFoundMessage(episodeIdentifier));
         await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
     }
 
     private async Task HandleAllSeasons(Issue issue)
     {
-        await overseerr.PostIssueComment(issue.Id, TranslationExtensions.WholeShowFaultyMessage());
+        await overseerr.PostIssueComment(issue.Id, ShowTranslationExtensions.WholeShowFaultyMessage());
         await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
     }
 
     private async Task HandleWholeSeason(Issue issue)
     {
-        await overseerr.PostIssueComment(issue.Id, TranslationExtensions.WholeSeasonFaultyMessage());
+        await overseerr.PostIssueComment(issue.Id, ShowTranslationExtensions.WholeSeasonFaultyMessage());
         await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
     }
 
@@ -109,7 +108,7 @@ public class
         if (retryCount >= 3)
         {
             Log.Information("Could not grab episode {identifier} after 3 attempts, closing issue...", issue.GetIdentifier());
-            await overseerr.PostIssueComment(issue.Id, TranslationExtensions.EpisodeNotGrabbedMessage(issue.GetIdentifier()));
+            await overseerr.PostIssueComment(issue.Id, ShowTranslationExtensions.EpisodeNotGrabbedMessage(issue.GetIdentifier()));
             await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
             return;
         }
@@ -132,7 +131,7 @@ public class
         await episodeFile.Match(
             async file => await DeleteFile(issue, file, identifier),
             async () => await overseerr.PostIssueComment(issue.Id,
-                TranslationExtensions.NoEpisodeFileToDeleteMessage(identifier))
+                ShowTranslationExtensions.NoEpisodeFileToDeleteMessage(identifier))
         );
     }
 
