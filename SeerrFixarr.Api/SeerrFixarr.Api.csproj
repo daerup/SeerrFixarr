@@ -8,7 +8,9 @@
         <UserSecretsId>3bf51a97-1fb3-48f8-a94d-a319123e6fae</UserSecretsId>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
-
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);MUD0002</NoWarn>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="NSwag.MSBuild" Version="14.4.0">
             <PrivateAssets>all</PrivateAssets>

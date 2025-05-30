@@ -1,0 +1,48 @@
+@page "/{identifier}"
+@rendermode RenderMode.InteractiveServer
+@using SeerrFixarr.Api.Radarr
+@inject IRadarrApi RadarrApi
+
+<h3>Movie Releases for ID: @Identifier</h3>
+
+@if (Releases == null)
+{
+    <p class="text-danger">Loading</p>
+}
+else if (Releases.Length == 0)
+{
+    <p class="text-danger">No releases found.</p>
+}
+else
+{
+    <p class="text-danger">Found @Releases.Length releases:</p>
+}
+
+@code {
+    [Parameter] public string Identifier { get; set; } = null!;
+
+    private MovieRelease[]? Releases { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadReleasesAsync();
+    }
+
+    private async Task LoadReleasesAsync()
+    {
+        try
+        {
+            var movieId = int.Parse(Identifier);
+            Releases = await RadarrApi.GetDummyData(movieId);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading releases: {ex.Message}");
+            Releases = [];
+        }
+        finally
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

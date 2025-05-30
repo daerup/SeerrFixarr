@@ -52,7 +52,7 @@ public class RadarrRunner(
       return;
     }
 
-    await radarr.GrabMovie(movie.Id);
+    await radarr.AutomaticGrabMovie(movie.Id);
 
     await timeOutProvider.AwaitDownloadQueueUpdated();
 

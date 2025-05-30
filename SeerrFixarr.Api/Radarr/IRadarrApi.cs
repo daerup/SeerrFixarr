@@ -13,8 +13,14 @@ public interface IRadarrApi
     [Delete("/moviefile/{id}")]
     Task DeleteMovieFile([AliasAs("id")] int movieFileId);
 
+    [Get("/release")]
+    Task<MovieRelease[]> GetMovieReleases(int movieId);
+
+    [Post("/release")]
+    Task InteractiveGrabMovie(string guid, int indexerId);
+
     [Post("/command")]
-    Task GrabMovie([Body] SearchMovieRequest movieId);
+    Task AutomaticGrabMovie([Body] SearchMovieRequest movieId);
 
     [Get("/queue/details")]
     Task<MovieDownload[]> GetDownloadQueue(int movieId);

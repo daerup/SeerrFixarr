@@ -33,7 +33,17 @@ internal class FakeRadarrApi : IRadarrApi
         return Task.CompletedTask;
     }
 
-    public Task GrabMovie(SearchMovieRequest request)
+    public Task<MovieRelease[]> GetMovieReleases(int movieId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task InteractiveGrabMovie(string guid, int indexerId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task AutomaticGrabMovie(SearchMovieRequest request)
     {
         var requestMovieId = request.MovieIds[0];
         var movie = Movies.SingleWithApiException(m => m.Id == requestMovieId);

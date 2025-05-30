@@ -11,12 +11,22 @@ public static class ApplicationExtensions
     {
         app.MapOpenApi("/swagger/v1/swagger.json");
         app.UseSwaggerUI(o => o.EnableTryItOutByDefault());
+        app.UseDeveloperExceptionPage();
         return app;
     }
 
     public static WebApplication UseProduction(this WebApplication app)
     {
+        app.UseExceptionHandler("/Error");
         return app;
+    }
+    
+    public static void UseBlazor(this WebApplication app)
+    {
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseAntiforgery();
+        app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
     }
 
     public static IEndpointConventionBuilder MapHealthcheck(this WebApplication app)

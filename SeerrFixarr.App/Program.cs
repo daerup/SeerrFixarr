@@ -17,12 +17,18 @@ builder.Services.AddHttpClient();
 builder.Services.AddArrApis();
 builder.Services.AddSeerrFixarrServices();
 
+builder.Services
+    .AddRazorComponents()
+    .AddInteractiveServerComponents();
+
 var app = builder.Build();
 _ = app.Environment.IsDevelopment() switch 
 {
     true => app.UseDevelopment(),
     false => app.UseProduction()
 };
+
+app.UseBlazor();
 
 app.MapHealthcheck();
 app.MapOverseerrWebhook();

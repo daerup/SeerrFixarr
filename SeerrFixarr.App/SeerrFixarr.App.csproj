@@ -57,4 +57,7 @@
         <DependentUpon>Translations.resx</DependentUpon>
       </Compile>
     </ItemGroup>
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\index.html" />
+    </ItemGroup>
 </Project>
