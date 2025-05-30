@@ -10,7 +10,7 @@ namespace SeerrFixarr.Api;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddSeerFixarrApi(this IServiceCollection services)
+    public static void AddArrApis(this IServiceCollection services)
     {
         services
             .AddRefitClient<IRadarrApi>()
