@@ -7,7 +7,8 @@ services:
     container_name: seerrfixarr
     hostname: seerrfixarr
     environment:
-      TZ: ${TZ}
+      TZ: Europe/Zurich
+      CULTURE: de-CH
       OVERSEERR__APIURL: http://overseerr:5055/api/v1
       OVERSEERR__APIKEY: ${OVERSEERR_API_KEY}
       RADARR__APIURL: http://radarr:7878/api/v3

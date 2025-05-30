@@ -7,24 +7,28 @@ using SeerrFixarr.App.Runners.Webhook;
 using SeerrFixarr.Shared.Settings;
 using Serilog;
 
-namespace SeerrFixarr.App;
+namespace SeerrFixarr.App.Extensions;
 
 public static class BuilderExtensions
 {
-    public static void AddLogging(this WebApplicationBuilder builder)
-    {
-        builder.Services.AddSerilog(c =>
-            c.ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().WriteTo.Console());
-    }
-
     public static void AddSettings(this WebApplicationBuilder builder)
     {
+        var (optional, reloadOnChange) = (true, true);
         builder.Configuration
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile("appsettings.json", optional, reloadOnChange)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName.ToLower()}.json", optional, reloadOnChange)
             .AddEnvironmentVariables()
-            .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true);
+            .AddUserSecrets(Assembly.GetExecutingAssembly(), optional);
         builder.Services.Configure<SeerrFixarrSettings>(builder.Configuration);
+    }
+
+    public static void AddLogging(this WebApplicationBuilder builder)
+    {
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .Enrich.FromLogContext()
+            .WriteTo.Console().CreateLogger();
+        builder.Services.AddSerilog(Log.Logger);
     }
 
     public static void AddSeerrFixarrServices(this IServiceCollection services)

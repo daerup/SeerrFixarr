@@ -1,27 +1,30 @@
 ﻿using SeerrFixarr.Api;
-using SeerrFixarr.App;
+using SeerrFixarr.App.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddEndpointsApiExplorer();
+builder.AddSettings();
+builder.AddLogging();
 
+builder.WebHost.ConfigurePort();
+builder.WebHost.ConfigureCulture();
+
+builder.Services.AddHealthChecks();
+builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
-
-builder.AddLogging();
-builder.AddSettings();
 
 builder.Services.AddArrApis();
 builder.Services.AddSeerrFixarrServices();
 
 var app = builder.Build();
-
 _ = app.Environment.IsDevelopment() switch 
 {
     true => app.UseDevelopment(),
     false => app.UseProduction()
 };
 
+app.MapHealthcheck();
 app.MapOverseerrWebhook();
 
 await app.RunAsync();

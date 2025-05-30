@@ -25,4 +25,9 @@ RUN apk add --no-cache icu-libs
 WORKDIR /app
 COPY --from=publish /app/publish .
 RUN chmod +x ./SeerrFixarr.App
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV PORT="80"
+ENV SERILOG__MINIMUMLEVEL__Default="Information"
+
 ENTRYPOINT ["./SeerrFixarr.App"]
