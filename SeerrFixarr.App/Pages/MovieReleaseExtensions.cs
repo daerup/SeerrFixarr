@@ -25,6 +25,9 @@ internal static class MovieReleaseExtensions
         var randomAge = random.Next(1, 30); // Random age between 1 and 30 days
         var randomSizeByte = (long)UnitsNet.Information.FromGigabytes( random.Next(1, 10)).Bytes;
         var guid = Guid.NewGuid().ToString();
+        var rejections = Enumerable.Range(0, random.Next(0, 3)) // Random number of rejections between 0 and 2
+            .Select(_ => $"Rejection {Guid.NewGuid().ToString()[..5]}")
+            .ToList();
         return new MovieRelease
         {
             Guid = guid,
@@ -46,9 +49,7 @@ internal static class MovieReleaseExtensions
             MappedMovieId = movieId,
             ImdbId = movieId,
             DownloadProtocol = random.Next(0, 2) == 0 ? DownloadProtocol.Torrent : DownloadProtocol.Usenet,
-            Rejections = [
-                "Some rejection reason",
-            ]
+            Rejections = rejections
         };
     }
 

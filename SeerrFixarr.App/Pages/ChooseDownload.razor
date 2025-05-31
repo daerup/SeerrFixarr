@@ -10,44 +10,86 @@
         <Lottie Source="@SelectedLottieUrl"/>
     }
 }
-else if (Releases.Length == 0)
+else if (Releases.Count == 0)
 {
     <Alert Icon="warning" Title="Warning..." Description="No releases found for this movie." Type="AlertType.Warning"/>
 }
 else
 {
-    <DataTable Items="Releases">
+    <DataTable Items="Releases" ShowVerticalBorder >
         <DataColumns>
-            <DataTableColumn Header="Title" Property="x => x.Title"></DataTableColumn>
-            <DataTableColumn Header="Score" Property="x => x.CustomFormatScore"></DataTableColumn>
-            <DataTableColumn Header="Language" Property="x => x.Languages" Width="15px">
+            <DataTableColumn Header="Protocol" Property="x => x.DownloadProtocol" Width="50px" SortOn="@_sortModel" OnSort="HandleSorting">
                 <Template>
-                    @switch(context.Languages.Count)
+                    <Button Disabled
+                            Type="@(context.DownloadProtocol == DownloadProtocol.Torrent ? ButtonType.Info : ButtonType.Success)"
+                            Text="@context.DownloadProtocol.ToString()"/>
+                </Template>
+            </DataTableColumn>
+            
+            <DataTableColumn Header="Score" Property="x => x.CustomFormatScore" SortOn="@_sortModel"
+                             OnSort="HandleSorting" Width="50px"/>
+            <DataTableColumn Header="Title" Property="x => x.Title"/>
+
+            <DataTableColumn Header="Language" Property="x => x.Languages" Width="15px" SortOn="@_sortModel"
+                             OnSort="HandleSorting">
+                <Template>
+                    @switch (context.Languages.Count)
                     {
                         case 0:
                             <span class="text-muted">No languages</span>
                             break;
                         case 1:
-                            <Button Text="@context.Languages[0].Name" Disabled Type="ButtonType.Outline" />
+                            <Button Text="@context.Languages[0].Name" Disabled Type="ButtonType.Secondary"/>
                             break;
                         default:
-                            <Tooltip Tip="@string.Join(Environment.NewLine, context.Languages.Select(l => l.Name))" TipWidth="10px" ShowBelow>
-                                <Button Text="Multi-language" Disabled Type="ButtonType.Outline"/>
+                            <Tooltip Tip="@string.Join(Environment.NewLine, context.Languages.Select(l => l.Name))"
+                                     TipWidth="10px" ShowBelow>
+                                <Button Text="Multi-language" Disabled Type="ButtonType.Secondary"/>
                             </Tooltip>
                             break;
                     }
-
                 </Template>
-                
             </DataTableColumn>
+            
+            <DataTableColumn Header="Quality" Property="x => x.Quality.Quality.Name" SortOn="@_sortModel" OnSort="HandleSorting" Width="50px" />
+            
+            <DataTableColumn Header="Size" Property="x => x.Size" Width="100px" SortOn="@_sortModel" OnSort="HandleSorting" Align="Alignment.Center" >
+                <Template>@($"{UnitsNet.Information.FromBytes(context.Size).Gigabytes:F2} GB")</Template>
+            </DataTableColumn>
+            
+            <DataTableColumn Header="Rejections" Property="x => x.Rejections" SortOn="@_sortModel"
+                             OnSort="HandleSorting" Width="50px" Align="Alignment.Center">
+                <Template>
+                    @if (context.Rejections.Any())
+                    {
+                        <Tooltip Tip="@(string.Join(Environment.NewLine, context.Rejections))" TipWidth="10px"
+                                 ShowBelow>
+                            <Icon Name="circle-alert" Color="red" Type="IconType.Lucide"></Icon>
+                        </Tooltip>
+                    }
+                    else
+                    {
+                        <Icon Name="circle-check" Color="green" Type="IconType.Lucide"></Icon>
+                    }
+                </Template>
+            </DataTableColumn>
+            
+            <DataTableColumn Header="Age" Property="x => x" Width="100px" SortOn="@_sortModel" OnSort="HandleSorting">
+                <Template>
+                    @(GetReadableAge(context))
+                </Template>
+            </DataTableColumn>
+        
         </DataColumns>
     </DataTable>
 }
 
 @code {
     [Parameter] public string Identifier { get; set; } = null!;
-    private MovieRelease[]? Releases { get; set; }
+    private List<MovieRelease>? Releases { get; set; }
     private string SelectedLottieUrl { get; set; } = "";
+
+    SortModel _sortModel = new() { Header = "Default", IsAscending = true };
 
     private readonly string[] LottieUrls =
     [
@@ -58,6 +100,7 @@ else
     protected override void OnAfterRender(bool firstRender)
     {
         SelectedLottieUrl = LottieUrls[new Random().Next(LottieUrls.Length)];
+        HandleSorting(_sortModel);
         StateHasChanged();
     }
 
@@ -71,7 +114,8 @@ else
         try
         {
             var movieId = int.Parse(Identifier);
-            Releases = await RadarrApi.GetDummyData(movieId);
+            // Releases = (await RadarrApi.GetDummyData(movieId)).ToList();
+            Releases = (await RadarrApi.GetMovieReleases(movieId)).ToList();
         }
         catch (Exception ex)
         {
@@ -83,4 +127,48 @@ else
             await InvokeAsync(StateHasChanged);
         }
     }
+
+    private void HandleSorting(SortModel sortModel)
+    {
+        if (Releases is null) return;
+
+        Releases = (sortModel.Header.ToLower(), sortModel.IsAscending) switch
+        {
+            ("default", true) => Releases.OrderBy(a => a.Rejections.Count)
+                .ThenBy(a => a.DownloadProtocol)
+                .ThenByDescending(a => a.CustomFormatScore)
+                .ThenByDescending(a => a.Languages.Count)
+                .ThenByDescending(a => a.Size)
+                .ThenByDescending(a => a.Quality.Quality.Resolution)
+                .ToList(),
+            ("score", true) => Releases.OrderBy(a => a.CustomFormatScore).ToList(),
+            ("score", false) => Releases.OrderByDescending(a => a.CustomFormatScore).ToList(),
+            ("protocol", true) => Releases.OrderBy(a => a.DownloadProtocol).ToList(),
+            ("protocol", false) => Releases.OrderByDescending(a => a.DownloadProtocol).ToList(),
+            ("size", true) => Releases.OrderBy(a => a.Size).ToList(),
+            ("size", false) => Releases.OrderByDescending(a => a.Size).ToList(),
+            ("language", true) => Releases.OrderBy(a => a.Languages.Count).ThenBy(a => a.Languages.FirstOrDefault()?.Name).ToList(),
+            ("language", false) => Releases.OrderByDescending(a => a.Languages.Count).ThenByDescending(a => a.Languages.FirstOrDefault()?.Name).ToList(),
+            ("age", true) => Releases.OrderBy(a => a.AgeMinutes).ToList(),
+            ("age", false) => Releases.OrderByDescending(a => a.AgeMinutes).ToList(),
+            ("quality", true) => Releases.OrderBy(a => a.Quality.Quality.Resolution).ToList(),
+            ("quality", false) => Releases.OrderByDescending(a => a.Quality.Quality.Resolution).ToList(),
+            (_, _) => Releases
+        };
+    }
+
+    private string GetReadableAge(MovieRelease context)
+    {
+        return context switch
+        {
+            { Age: 1 } => "1 day",
+            { Age: > 1 } => $"{context.Age} days",
+            { AgeHours: 1 } => "1 hour",
+            { AgeHours: > 1 } => $"{context.AgeHours} hours",
+            { AgeMinutes: 1 } => "1 minute",
+            { AgeMinutes: > 1 } => $"{context.AgeMinutes} minutes",
+            _ => "Just now"
+        };
+    }
+
 }
