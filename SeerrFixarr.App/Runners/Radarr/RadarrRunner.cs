@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Refit;
 using SeerrFixarr.Api.Overseerr;

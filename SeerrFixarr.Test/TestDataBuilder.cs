@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Microsoft.Extensions.Time.Testing;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;

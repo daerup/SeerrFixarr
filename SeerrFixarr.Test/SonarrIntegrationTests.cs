@@ -1,10 +1,13 @@
+using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Sonarr;
 using Shouldly;
+using Xunit;
 
 namespace SeerrFixarr.Test;
 

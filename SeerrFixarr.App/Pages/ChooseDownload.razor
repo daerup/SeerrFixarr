@@ -7,7 +7,7 @@
 {
     @if (!string.IsNullOrEmpty(SelectedLottieUrl))
     {
-        <Lottie Source="@SelectedLottieUrl"/>
+        <Lottie Source="@SelectedLottieUrl" Class="loading"/>
     }
 }
 else if (Releases.Count == 0)
@@ -16,16 +16,9 @@ else if (Releases.Count == 0)
 }
 else
 {
-    <DataTable Items="Releases" ShowVerticalBorder >
+    <DataTable Items="Releases" OnClick="OnReleaseSelected" TItem="MovieRelease">
         <DataColumns>
-            <DataTableColumn Header="Protocol" Property="x => x.DownloadProtocol" Width="50px" SortOn="@_sortModel" OnSort="HandleSorting">
-                <Template>
-                    <Button Disabled
-                            Type="@(context.DownloadProtocol == DownloadProtocol.Torrent ? ButtonType.Info : ButtonType.Success)"
-                            Text="@context.DownloadProtocol.ToString()"/>
-                </Template>
-            </DataTableColumn>
-            
+
             <DataTableColumn Header="Score" Property="x => x.CustomFormatScore" SortOn="@_sortModel"
                              OnSort="HandleSorting" Width="50px"/>
             <DataTableColumn Header="Title" Property="x => x.Title"/>
@@ -50,13 +43,24 @@ else
                     }
                 </Template>
             </DataTableColumn>
-            
-            <DataTableColumn Header="Quality" Property="x => x.Quality.Quality.Name" SortOn="@_sortModel" OnSort="HandleSorting" Width="50px" />
-            
-            <DataTableColumn Header="Size" Property="x => x.Size" Width="100px" SortOn="@_sortModel" OnSort="HandleSorting" Align="Alignment.Center" >
+
+            <DataTableColumn Header="Protocol" Property="x => x.DownloadProtocol" Width="50px" SortOn="@_sortModel"
+                             OnSort="HandleSorting">
+                <Template>
+                    <Button Disabled
+                            Type="@(context.DownloadProtocol == DownloadProtocol.Torrent ? ButtonType.Info : ButtonType.Success)"
+                            Text="@context.DownloadProtocol.ToString()"/>
+                </Template>
+            </DataTableColumn>
+
+            <DataTableColumn Header="Quality" Property="x => x.Quality.Quality.Name" SortOn="@_sortModel"
+                             OnSort="HandleSorting" Width="50px"/>
+
+            <DataTableColumn Header="Size" Property="x => x.Size" Width="100px" SortOn="@_sortModel"
+                             OnSort="HandleSorting" Align="Alignment.Center">
                 <Template>@($"{UnitsNet.Information.FromBytes(context.Size).Gigabytes:F2} GB")</Template>
             </DataTableColumn>
-            
+
             <DataTableColumn Header="Rejections" Property="x => x.Rejections" SortOn="@_sortModel"
                              OnSort="HandleSorting" Width="50px" Align="Alignment.Center">
                 <Template>
@@ -73,21 +77,49 @@ else
                     }
                 </Template>
             </DataTableColumn>
-            
+
             <DataTableColumn Header="Age" Property="x => x" Width="100px" SortOn="@_sortModel" OnSort="HandleSorting">
                 <Template>
                     @(GetReadableAge(context))
                 </Template>
             </DataTableColumn>
-        
         </DataColumns>
     </DataTable>
+}
+@if (!string.IsNullOrEmpty(SelectedLottieUrl))
+{
+    <Dialog Show="@_selectionConfirmed">
+        <Header>
+            Request has been sent. Please wait...
+        </Header>
+        <Content>
+            <Lottie Source="https://lottie.host/f71fc150-b932-43c8-8e94-9a56378e9532/h8dqLNwhtu.json" Class="downloading" Loop="false"/>
+        </Content>
+    </Dialog>
+}
+@if (!string.IsNullOrEmpty(SelectedLottieUrl))
+{
+    <Dialog Show="@_showConfirm">
+        <Header>
+            Do you want to download this release?
+        </Header>
+        <Content>
+            If this turns out to be a bad release, I will punch you.
+        </Content>
+        <Footer>
+            <Button Text="Cancel" Type="ButtonType.Destructive" OnClick="() => HandleCancel()"/>
+            <Button Text="Continue" OnClick="() => HandleConfirm()" Type="ButtonType.Success"/>
+        </Footer>
+    </Dialog>
 }
 
 @code {
     [Parameter] public string Identifier { get; set; } = null!;
     private List<MovieRelease>? Releases { get; set; }
     private string SelectedLottieUrl { get; set; } = "";
+    private bool _showConfirm = false;
+    private bool _selectionConfirmed = false;
+    private MovieRelease? _selectedRelease;
 
     SortModel _sortModel = new() { Header = "Default", IsAscending = true };
 
@@ -100,13 +132,12 @@ else
     protected override void OnAfterRender(bool firstRender)
     {
         SelectedLottieUrl = LottieUrls[new Random().Next(LottieUrls.Length)];
-        HandleSorting(_sortModel);
-        StateHasChanged();
-    }
+        if (firstRender)
+        {
+            LoadReleasesAsync().ContinueWith(_ => HandleSorting(_sortModel));
+        }
 
-    protected override void OnParametersSet()
-    {
-        _ = LoadReleasesAsync();
+        StateHasChanged();
     }
 
     private async Task LoadReleasesAsync()
@@ -114,7 +145,6 @@ else
         try
         {
             var movieId = int.Parse(Identifier);
-            // Releases = (await RadarrApi.GetDummyData(movieId)).ToList();
             Releases = (await RadarrApi.GetMovieReleases(movieId)).ToList();
         }
         catch (Exception ex)
@@ -169,6 +199,26 @@ else
             { AgeMinutes: > 1 } => $"{context.AgeMinutes} minutes",
             _ => "Just now"
         };
+    }
+
+    private void HandleCancel()
+    {
+        _showConfirm = false;
+        _selectedRelease = null;
+    }
+
+    private void HandleConfirm()
+    {
+        _showConfirm = false;
+        _selectionConfirmed = true;
+        StateHasChanged();
+    }
+
+    void OnReleaseSelected(MovieRelease obj)
+    {
+        if (obj is null) return;
+        _selectedRelease = obj;
+        _showConfirm = true;
     }
 
 }

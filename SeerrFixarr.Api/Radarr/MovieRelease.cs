@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace SeerrFixarr.Api.Radarr;
 
 public record MovieRelease

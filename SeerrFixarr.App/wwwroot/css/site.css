@@ -1,13 +1,45 @@
 .centered-body {
     display: flex;
-    justify-content: center;
     height: 100vh;
     margin: 0;
-    padding-top: 5vh;
+    /*background: #242424*/
+    background-image: linear-gradient(135deg, #130535, #2b0a0a, #311f37);
+    background-attachment: fixed;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    justify-content: center;
+}
+
+html {
+    overflow: hidden !important;
+}
+
+.sbc-data-table {
+    background: var(--data-table-row);
+    height: 90vh !important;
+}
+
+.sbc-data-table td {
+    border-bottom-color: #3e3e48 !important;
+}
+
+thead, .sbc-data-table tr:nth-child(2n) {
+    background-color: #202020 !important;
+}
+
+tr:hover td {
+    background: #062d06;
+    cursor: pointer;
 }
 
 .centered-content {
     min-width: 80vw;
     justify-content: center;
     display: flex;
+    height: fit-content;
+}
+
+.downloading{
+    margin-left: auto;
+    margin-right: auto;
 }

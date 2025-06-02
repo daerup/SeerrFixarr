@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using System.Threading.Tasks;
+using Refit;
 
 namespace SeerrFixarr.Api.Radarr;
 

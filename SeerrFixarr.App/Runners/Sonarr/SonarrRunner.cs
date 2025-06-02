@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Sonarr;

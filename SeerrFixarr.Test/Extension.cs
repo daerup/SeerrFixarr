@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
 using SeerrFixarr.Api.Sonarr;
