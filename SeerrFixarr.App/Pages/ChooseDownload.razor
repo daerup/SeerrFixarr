@@ -11,7 +11,7 @@
 @if (_invalidToken == true)
 {
     <Alert Icon="error" Title="Error..." Type="AlertType.Destructive"
-           Description="Invalid token provided. Please check the link you clicked on."/>
+           Description="Invalid one-time token provided. "/>
 }
 else if (Releases == null)
 {
@@ -236,11 +236,13 @@ else
         _selectionConfirmed = true;
         StateHasChanged();
         TokenCreator.InvalidateToken(Token);
-        // var task = _type switch
-        // {
-        //     MediaType.Movie => RadarrApi.InteractiveGrabMovie(_selectedRelease!.Guid, _selectedRelease!.IndexerId),
-        //     MediaType.Tv => SonarrApi.InteractiveGrabEpisode(_selectedRelease!.Guid, _selectedRelease!.IndexerId)
-        // };
+        var request = InteractiveReleaseGrabRequest.FromRelease(_selectedRelease!);
+        _ = _type switch
+        {
+            MediaType.Movie => RadarrApi.InteractiveGrabMovie(request),
+            MediaType.Tv => SonarrApi.InteractiveGrabEpisode(request),
+            _ => throw new InvalidOperationException("Invalid media type")
+        };
     }
 
     void OnReleaseSelected(InteractiveRelease obj)

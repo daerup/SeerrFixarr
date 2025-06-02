@@ -18,7 +18,7 @@ public interface IRadarrApi
     Task<InteractiveRelease[]> GetMovieReleases(int movieId);
 
     [Post("/release")]
-    Task InteractiveGrabMovie(string guid, int indexerId);
+    Task InteractiveGrabMovie([Body] InteractiveReleaseGrabRequest release);
 
     [Post("/command")]
     Task AutomaticGrabMovie([Body] SearchMovieRequest movieId);

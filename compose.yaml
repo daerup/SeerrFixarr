@@ -11,7 +11,7 @@
       SONARR__APIURL: ${SONARR_API_URL}
       SONARR__APIKEY: ${SONARR_API_KEY}
     ports:
-      - 8080:8080
+      - 8081:8080
     build:
       context: .
       dockerfile: SeerrFixarr.App/Dockerfile

@@ -39,7 +39,7 @@ internal class FakeRadarrApi : IRadarrApi
         throw new NotImplementedException();
     }
 
-    public Task InteractiveGrabMovie(string guid, int indexerId)
+    public Task InteractiveGrabMovie(InteractiveReleaseGrabRequest request)
     {
         throw new NotImplementedException();
     }

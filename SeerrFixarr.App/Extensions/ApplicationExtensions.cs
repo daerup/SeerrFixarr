@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
-using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.Runners.Webhook;
 using Serilog;
 
@@ -21,7 +20,7 @@ public static class ApplicationExtensions
         app.UseExceptionHandler("/Error");
         return app;
     }
-    
+
     public static void UseBlazor(this WebApplication app)
     {
         app.UseStaticFiles();
@@ -49,15 +48,10 @@ public static class ApplicationExtensions
 
     public static RouteHandlerBuilder MapOverseerrWebhook(this WebApplication app)
     {
-        app.MapGet("GetTestToken", ([FromServices] TokenCreator tokenCreator, int id, int MediaType) =>
-        {
-            var token = tokenCreator.CreateToken(id, (MediaType)MediaType, TimeSpan.FromMinutes(15));
-            return Results.Ok(token);
-        });
-        
         return app.MapPost("/webhook", async ([FromServices] WebhookRunner runner, [FromBody] WebhookIssueRoot body) =>
         {
-            Log.Information("Webhook received for Issue #{IssueId} reported by {username}", body.IssueId, body.ReportedByUsername);
+            Log.Information("Webhook received for Issue #{IssueId} reported by {username}", body.IssueId,
+                body.ReportedByUsername);
             await runner.RunAsync(body);
             return Results.Ok();
         });

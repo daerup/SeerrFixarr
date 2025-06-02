@@ -39,7 +39,7 @@ internal class FakeSonarrApi : ISonarrApi
       throw new NotImplementedException();
   }
 
-  public Task InteractiveGrabEpisode(string guid, int indexerId)
+  public Task InteractiveGrabEpisode(InteractiveReleaseGrabRequest request)
   {
       throw new NotImplementedException();
   }

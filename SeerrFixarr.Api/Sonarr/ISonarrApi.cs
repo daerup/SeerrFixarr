@@ -19,7 +19,7 @@ public interface ISonarrApi
     Task<InteractiveRelease[]> GetEpisodeReleases(int episodeId);
 
     [Post("/release")]
-    Task InteractiveGrabEpisode(string guid, int indexerId);
+    Task InteractiveGrabEpisode([Body] InteractiveReleaseGrabRequest request);
     
     [Post("/command")]
     Task<string> AutomaticGrabEpisode([Body] SearchEpisodeRequest episodeId);
