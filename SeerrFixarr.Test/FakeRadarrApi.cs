@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using SeerrFixarr.Api.Radarr;
+using SeerrFixarr.Api.Shared;
 using UnitsNet;
 
 namespace SeerrFixarr.Test;
@@ -37,7 +38,7 @@ internal class FakeRadarrApi : IRadarrApi
         return Task.CompletedTask;
     }
 
-    public Task<MovieRelease[]> GetMovieReleases(int movieId)
+    public Task<InteractiveRelease[]> GetMovieReleases(int movieId)
     {
         throw new NotImplementedException();
     }

@@ -1,7 +1,10 @@
 @page "/{identifier}"
 @rendermode RenderMode.InteractiveServer
 @using SeerrFixarr.Api.Radarr
+@using SeerrFixarr.Api.Shared
+@using SeerrFixarr.Api.Sonarr
 @inject IRadarrApi RadarrApi
+@inject ISonarrApi SonarrApi
 
 @if (Releases == null)
 {
@@ -12,11 +15,11 @@
 }
 else if (Releases.Count == 0)
 {
-    <Alert Icon="warning" Title="Warning..." Description="No releases found for this movie." Type="AlertType.Warning"/>
+    <Alert Icon="warning" Title="Warning..." Description="No releases found." Type="AlertType.Warning"/>
 }
 else
 {
-    <DataTable Items="Releases" OnClick="OnReleaseSelected" TItem="MovieRelease">
+    <DataTable Items="Releases" OnClick="OnReleaseSelected" TItem="InteractiveRelease">
         <DataColumns>
 
             <DataTableColumn Header="Score" Property="x => x.CustomFormatScore" SortOn="@_sortModel"
@@ -90,7 +93,7 @@ else
 {
     <Dialog Show="@_selectionConfirmed">
         <Header>
-            Request has been sent. Please wait...
+            Request has been sent. You may close this site now...
         </Header>
         <Content>
             <Lottie Source="https://lottie.host/f71fc150-b932-43c8-8e94-9a56378e9532/h8dqLNwhtu.json" Class="downloading" Loop="false"/>
@@ -115,11 +118,11 @@ else
 
 @code {
     [Parameter] public string Identifier { get; set; } = null!;
-    private List<MovieRelease>? Releases { get; set; }
+    private List<InteractiveRelease>? Releases { get; set; }
     private string SelectedLottieUrl { get; set; } = "";
     private bool _showConfirm = false;
     private bool _selectionConfirmed = false;
-    private MovieRelease? _selectedRelease;
+    private InteractiveRelease? _selectedRelease;
 
     SortModel _sortModel = new() { Header = "Default", IsAscending = true };
 
@@ -144,8 +147,10 @@ else
     {
         try
         {
-            var movieId = int.Parse(Identifier);
-            Releases = (await RadarrApi.GetMovieReleases(movieId)).ToList();
+            var id = int.Parse(Identifier);
+            // Releases = (await RadarrApi.GetMovieReleases(movieId)).ToList();
+            // Releases = (await RadarrApi.GetDummyData(id)).ToList();
+            Releases = (await SonarrApi.GetEpisodeReleases(id)).ToList();
         }
         catch (Exception ex)
         {
@@ -187,7 +192,7 @@ else
         };
     }
 
-    private string GetReadableAge(MovieRelease context)
+    private string GetReadableAge(InteractiveRelease context)
     {
         return context switch
         {
@@ -214,7 +219,7 @@ else
         StateHasChanged();
     }
 
-    void OnReleaseSelected(MovieRelease obj)
+    void OnReleaseSelected(InteractiveRelease obj)
     {
         if (obj is null) return;
         _selectedRelease = obj;

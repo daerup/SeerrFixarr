@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Refit;
+using SeerrFixarr.Api.Shared;
 
 namespace SeerrFixarr.Api.Sonarr;
 
@@ -14,11 +15,18 @@ public interface ISonarrApi
     [Delete("/episodefile/{id}")] 
     Task DeleteEpisodeFile([AliasAs("id")] int episodeFileId);
 
-    [Post("/command")]
-    Task<string> GrabEpisode([Body] SearchEpisodeRequest episodeId);
+
+    [Get("/release")]
+    Task<InteractiveRelease[]> GetEpisodeReleases(int episodeId);
+
+    [Post("/release")]
+    Task InteractiveGrabEpisode(string guid, int indexerId);
     
     [Post("/command")]
-    Task GrabSeries([Body] SearchSeriesRequest seriesId);
+    Task<string> AutomaticGrabEpisode([Body] SearchEpisodeRequest episodeId);
+    
+    [Post("/command")]
+    Task AutomaticGrabSeries([Body] SearchSeriesRequest seriesId);
     
     [Get("/queue/details")]
     Task<EpisodeDownload[]> GetDownloadQueueOfSeries(int seriesId);

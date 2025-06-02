@@ -37,7 +37,7 @@ internal class FakeSonarrApi : ISonarrApi
     return Task.CompletedTask;
   }
 
-  public Task<string> GrabEpisode(SearchEpisodeRequest episodeId)
+  public Task<string> AutomaticGrabEpisode(SearchEpisodeRequest episodeId)
   {
     var requestEpisodeId = episodeId.EpisodeIds[0];
     var episode = Episodes.SingleWithApiException(m => m.Id == requestEpisodeId);
@@ -46,7 +46,7 @@ internal class FakeSonarrApi : ISonarrApi
     return Task.FromResult("test");
   }
 
-  public Task GrabSeries(SearchSeriesRequest seriesId)
+  public Task AutomaticGrabSeries(SearchSeriesRequest seriesId)
   {
     var requestSeriesId = seriesId.SeriesId;
     const int numberOfEpisodesInFakeSeries = 10;

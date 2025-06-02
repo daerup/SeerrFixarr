@@ -83,7 +83,7 @@ public class
             return;
         }
 
-        await sonarr.GrabEpisode(episode.Id);
+        await sonarr.AutomaticGrabEpisode(episode.Id);
         await timeOutProvider.AwaitDownloadQueueUpdated();
 
         await CheckIfGrabbed(episode, issue);

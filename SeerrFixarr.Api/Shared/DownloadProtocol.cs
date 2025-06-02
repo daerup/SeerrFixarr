@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace SeerrFixarr.Api.Radarr;
+namespace SeerrFixarr.Api.Shared;
 
 public enum DownloadProtocol
 {

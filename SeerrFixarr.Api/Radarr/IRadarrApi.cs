@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Refit;
+using SeerrFixarr.Api.Shared;
 
 namespace SeerrFixarr.Api.Radarr;
 
@@ -15,7 +16,7 @@ public interface IRadarrApi
     Task DeleteMovieFile([AliasAs("id")] int movieFileId);
 
     [Get("/release")]
-    Task<MovieRelease[]> GetMovieReleases(int movieId);
+    Task<InteractiveRelease[]> GetMovieReleases(int movieId);
 
     [Post("/release")]
     Task InteractiveGrabMovie(string guid, int indexerId);
