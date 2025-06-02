@@ -1,5 +1,3 @@
-using System;
-
 namespace SeerrFixarr.Api.Overseerr;
 
 public record Comment

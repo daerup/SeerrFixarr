@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.Runners.Radarr;
 using SeerrFixarr.App.Runners.Sonarr;

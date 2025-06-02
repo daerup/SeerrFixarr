@@ -1,8 +1,5 @@
-using System;
 using Serilog;
 using System.Globalization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 
 namespace SeerrFixarr.App.Extensions;
 

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using SeerrFixarr.Api.Shared;
 using SeerrFixarr.Api.Sonarr;
 using UnitsNet;
 
@@ -35,6 +32,16 @@ internal class FakeSonarrApi : ISonarrApi
       Episodes.Remove(e);
     });
     return Task.CompletedTask;
+  }
+
+  public Task<InteractiveRelease[]> GetEpisodeReleases(int episodeId)
+  {
+      throw new NotImplementedException();
+  }
+
+  public Task InteractiveGrabEpisode(string guid, int indexerId)
+  {
+      throw new NotImplementedException();
   }
 
   public Task<string> AutomaticGrabEpisode(SearchEpisodeRequest episodeId)

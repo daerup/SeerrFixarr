@@ -1,12 +1,19 @@
-@page "/{identifier}"
+@page "/{Token}"
 @rendermode RenderMode.InteractiveServer
+@using SeerrFixarr.Api.Overseerr
 @using SeerrFixarr.Api.Radarr
 @using SeerrFixarr.Api.Shared
 @using SeerrFixarr.Api.Sonarr
+@inject TokenCreator TokenCreator
 @inject IRadarrApi RadarrApi
 @inject ISonarrApi SonarrApi
 
-@if (Releases == null)
+@if (_invalidToken == true)
+{
+    <Alert Icon="error" Title="Error..." Type="AlertType.Destructive"
+           Description="Invalid token provided. Please check the link you clicked on."/>
+}
+else if (Releases == null)
 {
     @if (!string.IsNullOrEmpty(SelectedLottieUrl))
     {
@@ -96,7 +103,8 @@ else
             Request has been sent. You may close this site now...
         </Header>
         <Content>
-            <Lottie Source="https://lottie.host/f71fc150-b932-43c8-8e94-9a56378e9532/h8dqLNwhtu.json" Class="downloading" Loop="false"/>
+            <Lottie Source="https://lottie.host/f71fc150-b932-43c8-8e94-9a56378e9532/h8dqLNwhtu.json"
+                    Class="downloading" Loop="false"/>
         </Content>
     </Dialog>
 }
@@ -117,7 +125,9 @@ else
 }
 
 @code {
-    [Parameter] public string Identifier { get; set; } = null!;
+    [Parameter] public string Token { get; set; } = null!;
+    private bool? _invalidToken = null;
+    private MediaType _type;
     private List<InteractiveRelease>? Releases { get; set; }
     private string SelectedLottieUrl { get; set; } = "";
     private bool _showConfirm = false;
@@ -147,10 +157,18 @@ else
     {
         try
         {
-            var id = int.Parse(Identifier);
-            // Releases = (await RadarrApi.GetMovieReleases(movieId)).ToList();
-            // Releases = (await RadarrApi.GetDummyData(id)).ToList();
-            Releases = (await SonarrApi.GetEpisodeReleases(id)).ToList();
+            _invalidToken = !TokenCreator.TryValidateToken(Token, out var data);
+            if (_invalidToken == false)
+            {
+                (var id, _type) = data;
+                Releases = (_type switch
+                {
+                    MediaType.Movie => await RadarrApi.GetMovieReleases(id),
+                    MediaType.Tv => await SonarrApi.GetEpisodeReleases(id),
+                    _ => throw new InvalidOperationException("Invalid media type")
+                }).ToList();
+            }
+            StateHasChanged();
         }
         catch (Exception ex)
         {
@@ -217,6 +235,12 @@ else
         _showConfirm = false;
         _selectionConfirmed = true;
         StateHasChanged();
+        TokenCreator.InvalidateToken(Token);
+        // var task = _type switch
+        // {
+        //     MediaType.Movie => RadarrApi.InteractiveGrabMovie(_selectedRelease!.Guid, _selectedRelease!.IndexerId),
+        //     MediaType.Tv => SonarrApi.InteractiveGrabEpisode(_selectedRelease!.Guid, _selectedRelease!.IndexerId)
+        // };
     }
 
     void OnReleaseSelected(InteractiveRelease obj)

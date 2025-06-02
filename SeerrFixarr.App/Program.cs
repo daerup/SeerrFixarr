@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using SeerrFixarr.Api;
+﻿using SeerrFixarr.Api;
 using SeerrFixarr.App.Extensions;
 using Sysinfocus.AspNetCore.Components;
 

@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;

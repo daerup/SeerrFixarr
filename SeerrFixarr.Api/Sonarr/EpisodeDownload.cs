@@ -1,5 +1,3 @@
-using System;
-
 namespace SeerrFixarr.Api.Sonarr;
 
 public class EpisodeDownload

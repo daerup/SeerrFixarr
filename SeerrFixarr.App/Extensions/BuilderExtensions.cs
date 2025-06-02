@@ -1,7 +1,5 @@
 using System.Reflection;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.Runners;
 using SeerrFixarr.App.Runners.Radarr;
@@ -42,5 +40,10 @@ public static class BuilderExtensions
         services.AddScoped<WebhookRunner>();
         services.AddScoped<RadarrRunner>();
         services.AddScoped<SonarrRunner>();
+        services.AddSingleton<TokenCreator> (serviceProvider =>
+        {
+            var secret = serviceProvider.GetRequiredService<IOptions<SeerrFixarrSettings>>().Value.JwtSigningKey;
+            return new TokenCreator(secret);
+        });
     }
 }

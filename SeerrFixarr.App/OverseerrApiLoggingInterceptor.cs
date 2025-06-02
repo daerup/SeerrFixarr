@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using SeerrFixarr.Api.Overseerr;
 using Serilog;
 
