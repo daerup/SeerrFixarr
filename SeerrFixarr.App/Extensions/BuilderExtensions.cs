@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.Runners;
@@ -14,6 +15,14 @@ namespace SeerrFixarr.App.Extensions;
 
 public static class BuilderExtensions
 {
+    public static void AddDataProtection(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddDataProtection()
+            .UseEphemeralDataProtectionProvider()
+            .SetApplicationName(nameof(SeerrFixarr));
+    }
+
     public static void AddSettings(this WebApplicationBuilder builder)
     {
         var (optional, reloadOnChange) = (true, true);
@@ -42,16 +51,21 @@ public static class BuilderExtensions
         services.AddScoped<WebhookRunner>();
         services.AddScoped<RadarrRunner>();
         services.AddScoped<SonarrRunner>();
-        services.AddSingleton<TokenCreator> (serviceProvider =>
+        services.AddSingleton<TokenCreator>(serviceProvider =>
         {
             var secret = serviceProvider.GetRequiredService<IOptions<SeerrFixarrSettings>>().Value.JwtSigningKey;
             return new TokenCreator(secret);
         });
     }
-    
+
     public static void AddBlazor(this IServiceCollection services)
     {
         services.AddSysinfocus(jsCssFromCDN: false);
+        services.AddAntiforgery(options =>
+        {
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        });
         services.AddRazorComponents().AddInteractiveServerComponents();
     }
 }

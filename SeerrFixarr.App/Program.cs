@@ -2,6 +2,8 @@
 using SeerrFixarr.App.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddDataProtection();
 builder.AddSettings();
 builder.AddLogging();
 
@@ -24,8 +26,8 @@ _ = app.Environment.IsDevelopment() switch
     true => app.UseDevelopment(),
     false => app.UseProduction()
 };
-app.UseBlazor();
 
+app.UseBlazor();
 app.MapHealthcheck();
 app.MapOverseerrWebhook();
 

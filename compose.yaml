@@ -4,6 +4,7 @@
     environment:
       TZ: ${TZ}
       CULTURE: ${CULTURE}
+      PORT: 80
       OVERSEERR__APIURL: ${OVERSEERR_API_URL}
       OVERSEERR__APIKEY: ${OVERSEERR_API_KEY}
       RADARR__APIURL: ${RADARR_API_URL}
@@ -11,7 +12,7 @@
       SONARR__APIURL: ${SONARR_API_URL}
       SONARR__APIKEY: ${SONARR_API_KEY}
     ports:
-      - 8081:8080
+      - 8080:80
     build:
       context: .
       dockerfile: SeerrFixarr.App/Dockerfile

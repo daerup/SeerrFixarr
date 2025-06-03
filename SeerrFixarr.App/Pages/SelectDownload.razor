@@ -1,4 +1,4 @@
-@page "/{Token}"
+@page "/select"
 @rendermode RenderMode.InteractiveServer
 @using SeerrFixarr.Api.Overseerr
 @using SeerrFixarr.Api.Radarr
@@ -125,7 +125,9 @@ else
 }
 
 @code {
-    [Parameter] public string Token { get; set; } = null!;
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "token")]
+    public string Token { get; set; } = null!;
     private bool? _validToken;
     private MediaType _type;
     private List<InteractiveRelease>? Releases { get; set; }
