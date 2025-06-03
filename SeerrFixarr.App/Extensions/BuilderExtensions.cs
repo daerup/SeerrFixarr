@@ -1,5 +1,4 @@
 using System.Reflection;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.Runners;

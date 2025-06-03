@@ -8,7 +8,7 @@
 @inject IRadarrApi RadarrApi
 @inject ISonarrApi SonarrApi
 
-@if (_invalidToken == true)
+@if (_validToken == false)
 {
     <Alert Icon="error" Title="Error..." Type="AlertType.Destructive"
            Description="Invalid one-time token provided. "/>
@@ -126,7 +126,7 @@ else
 
 @code {
     [Parameter] public string Token { get; set; } = null!;
-    private bool? _invalidToken = null;
+    private bool? _validToken;
     private MediaType _type;
     private List<InteractiveRelease>? Releases { get; set; }
     private string SelectedLottieUrl { get; set; } = "";
@@ -157,8 +157,8 @@ else
     {
         try
         {
-            _invalidToken = !TokenCreator.TryValidateToken(Token, out var data);
-            if (_invalidToken == false)
+            _validToken = TokenCreator.TryValidateToken(Token, out var data);
+            if (_validToken == true)
             {
                 (var id, _type) = data;
                 Releases = (_type switch
