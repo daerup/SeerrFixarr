@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.Runners;
@@ -7,6 +8,8 @@ using SeerrFixarr.App.Runners.Sonarr;
 using SeerrFixarr.App.Runners.Webhook;
 using SeerrFixarr.Shared.Settings;
 using Serilog;
+using Sysinfocus.AspNetCore.Components;
+using Log = Serilog.Log;
 
 namespace SeerrFixarr.App.Extensions;
 
@@ -45,5 +48,11 @@ public static class BuilderExtensions
             var secret = serviceProvider.GetRequiredService<IOptions<SeerrFixarrSettings>>().Value.JwtSigningKey;
             return new TokenCreator(secret);
         });
+    }
+    
+    public static void AddBlazor(this IServiceCollection services)
+    {
+        services.AddSysinfocus(jsCssFromCDN: false);
+        services.AddRazorComponents().AddInteractiveServerComponents();
     }
 }

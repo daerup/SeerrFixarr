@@ -1,6 +1,5 @@
 ﻿using SeerrFixarr.Api;
 using SeerrFixarr.App.Extensions;
-using Sysinfocus.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddSettings();
@@ -17,19 +16,14 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddArrApis();
 builder.Services.AddSeerrFixarrServices();
-
-builder.Services
-    .AddSysinfocus(jsCssFromCDN: false)
-    .AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddBlazor();
 
 var app = builder.Build();
-_ = app.Environment.IsDevelopment() switch 
+_ = app.Environment.IsDevelopment() switch
 {
     true => app.UseDevelopment(),
     false => app.UseProduction()
 };
-
 app.UseBlazor();
 
 app.MapHealthcheck();

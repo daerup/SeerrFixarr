@@ -14,19 +14,16 @@ RUN dotnet publish "SeerrFixarr.App.csproj" -c $BUILD_CONFIGURATION -o /app/publ
     /p:DebugType=none \
     /p:DebugSymbols=false \
     /p:Optimize=true \
-    /p:SelfContained=true \
-    /p:RuntimeIdentifier=linux-musl-x64 \
-    /p:EnableCompressionInSingleFile=true \
+    /p:RuntimeIdentifier=linux-x64 \
     /p:PublishSingleFile=false
 
-FROM alpine:latest
-RUN apk add --no-cache icu-libs
+FROM mcr.microsoft.com/dotnet/nightly/aspnet:10.0-preview-noble-chiseled-composite-extra
 WORKDIR /app
 COPY --from=publish /app/publish .
-RUN chmod +x ./SeerrFixarr.App
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV PORT="80"
+ENV CULTURE="de-CH"
 ENV SERILOG__MINIMUMLEVEL__Default="Information"
 
 ENTRYPOINT ["./SeerrFixarr.App"]

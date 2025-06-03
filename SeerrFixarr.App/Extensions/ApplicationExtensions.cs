@@ -29,9 +29,9 @@ public static class ApplicationExtensions
         app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
     }
 
-    public static IEndpointConventionBuilder MapHealthcheck(this WebApplication app)
+    public static void MapHealthcheck(this WebApplication app)
     {
-        return app.MapHealthChecks("/healthz", new HealthCheckOptions
+        app.MapHealthChecks("/healthz", new HealthCheckOptions
         {
             ResponseWriter = async (context, report) =>
             {
@@ -46,9 +46,9 @@ public static class ApplicationExtensions
         });
     }
 
-    public static RouteHandlerBuilder MapOverseerrWebhook(this WebApplication app)
+    public static void MapOverseerrWebhook(this WebApplication app)
     {
-        return app.MapPost("/webhook", async ([FromServices] WebhookRunner runner, [FromBody] WebhookIssueRoot body) =>
+        app.MapPost("/webhook", async ([FromServices] WebhookRunner runner, [FromBody] WebhookIssueRoot body) =>
         {
             Log.Information("Webhook received for Issue #{IssueId} reported by {username}", body.IssueId,
                 body.ReportedByUsername);
