@@ -17,8 +17,7 @@ RUN dotnet publish "SeerrFixarr.App.csproj" -c $BUILD_CONFIGURATION -o /app/publ
     /p:SelfContained=true \
     /p:RuntimeIdentifier=linux-musl-x64 \
     /p:EnableCompressionInSingleFile=true \
-    /p:PublishSingleFile=false \
-    /p:PublishTrimmed=true
+    /p:PublishSingleFile=false
 
 FROM alpine:latest
 RUN apk add --no-cache icu-libs

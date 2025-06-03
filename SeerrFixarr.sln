@@ -10,6 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.env = .env
 		.env.example = .env.example
 		docker-compose.exampe.yml = docker-compose.exampe.yml
+		.github\CODEOWNERS = .github\CODEOWNERS
+		.github\workflows\Docker.yml = .github\workflows\Docker.yml
+		.github\workflows\PR.yml = .github\workflows\PR.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeerrFixarr.Api", "SeerrFixarr.Api\SeerrFixarr.Api.csproj", "{A36FA2F3-CE14-4C90-B2E3-CD33097F94D5}"
