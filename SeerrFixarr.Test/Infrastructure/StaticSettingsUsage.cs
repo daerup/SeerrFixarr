@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace SeerrFixarr.Test;
+namespace SeerrFixarr.Test.Infrastructure;
 
 public static class StaticSettingsUsage
 {

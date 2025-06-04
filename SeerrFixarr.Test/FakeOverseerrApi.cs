@@ -1,4 +1,5 @@
 using SeerrFixarr.Api.Overseerr;
+using SeerrFixarr.Test.Infrastructure;
 
 namespace SeerrFixarr.Test;
 

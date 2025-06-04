@@ -4,16 +4,19 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using SeerrFixarr.Api.Overseerr;
 
+namespace SeerrFixarr.App.Shared;
 
-internal record TokenData(int Id, MediaType MediaType);
+public record TokenData(int Id, MediaType MediaType);
 
-internal class TokenCreator(string secret)
+public class TokenCreator(TimeProvider timeProvider, string secret)
 {
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
     private readonly HashSet<string> _revokedTokens = [];
     private const string IdClaimString = "id";
     private const string MediaTypeClaimString = "mediaType";
 
+    public event Action<string> OnTokenInvalidated = delegate { };
+    
     public string CreateToken(int id, MediaType mediaType, TimeSpan expiresIn)
     {
         var claims = new[]
@@ -24,20 +27,21 @@ internal class TokenCreator(string secret)
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
+        
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.UtcNow.Add(expiresIn),
+            expires: timeProvider.GetUtcNow().Add(expiresIn).DateTime,
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public void InvalidateToken(string token)
+    public void RevokeToken(string token)
     {
         lock (_lock)
         {
             _revokedTokens.Add(token);
+            OnTokenInvalidated(token);
         }
     }
 
@@ -51,7 +55,7 @@ internal class TokenCreator(string secret)
 
     private void RefreshRevokedTokens()
     {
-        var now = DateTime.UtcNow;
+        var now = timeProvider.GetUtcNow().DateTime;
         lock (_lock)
         {
             _revokedTokens.RemoveWhere(token =>
@@ -60,7 +64,12 @@ internal class TokenCreator(string secret)
                 try
                 {
                     var jwtToken = tokenHandler.ReadJwtToken(token);
-                    return jwtToken.ValidTo < now;
+                    var expired = jwtToken.ValidTo < now;
+                    if (expired)
+                    {
+                        OnTokenInvalidated(token);
+                    }
+                    return expired;
                 }
                 catch
                 {
@@ -81,20 +90,12 @@ internal class TokenCreator(string secret)
         }
         
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(secret);
         
         try
         {
-            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false ,
-                ValidateIssuerSigningKey = true,
-                ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ClockSkew = TimeSpan.Zero
-            }, out _);
-
+            var tokenValidationParameters = CreateTokenValidationParameters();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
+            
             var idClaim = principal.FindFirst(IdClaimString)?.Value;
             var typeClaim = principal.FindFirst(MediaTypeClaimString)?.Value;
 
@@ -112,5 +113,19 @@ internal class TokenCreator(string secret)
             tokenData = null!;
             return false;
         }
+    }
+
+    private TokenValidationParameters CreateTokenValidationParameters()
+    {
+        var key = Encoding.UTF8.GetBytes(secret);
+        return new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false ,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero,
+        }.WithTimeProvider(timeProvider);
     }
 }

@@ -1,6 +1,7 @@
 using CSharpFunctionalExtensions;
 using SeerrFixarr.Api.Radarr;
 using SeerrFixarr.Api.Shared;
+using SeerrFixarr.Test.Infrastructure;
 using UnitsNet;
 
 namespace SeerrFixarr.Test;

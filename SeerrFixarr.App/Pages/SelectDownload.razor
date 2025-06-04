@@ -4,6 +4,7 @@
 @using SeerrFixarr.Api.Radarr
 @using SeerrFixarr.Api.Shared
 @using SeerrFixarr.Api.Sonarr
+@using SeerrFixarr.App.Shared
 @inject TokenCreator TokenCreator
 @inject IRadarrApi RadarrApi
 @inject ISonarrApi SonarrApi
@@ -126,7 +127,7 @@ else
 
 @code {
     [Parameter]
-    [SupplyParameterFromQuery(Name = "token")]
+    [SupplyParameterFromQuery(Name = Constants.TokenQueryParameterName)]
     public string Token { get; set; } = null!;
     private bool? _validToken;
     private MediaType _type;
@@ -237,7 +238,7 @@ else
         _showConfirm = false;
         _selectionConfirmed = true;
         StateHasChanged();
-        TokenCreator.InvalidateToken(Token);
+        TokenCreator.RevokeToken(Token);
         var request = InteractiveReleaseGrabRequest.FromRelease(_selectedRelease!);
         _ = _type switch
         {

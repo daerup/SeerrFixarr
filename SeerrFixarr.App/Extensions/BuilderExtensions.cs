@@ -6,6 +6,7 @@ using SeerrFixarr.App.Runners;
 using SeerrFixarr.App.Runners.Radarr;
 using SeerrFixarr.App.Runners.Sonarr;
 using SeerrFixarr.App.Runners.Webhook;
+using SeerrFixarr.App.Shared;
 using SeerrFixarr.Shared.Settings;
 using Serilog;
 using Sysinfocus.AspNetCore.Components;
@@ -54,8 +55,10 @@ public static class BuilderExtensions
         services.AddSingleton<TokenCreator>(serviceProvider =>
         {
             var secret = serviceProvider.GetRequiredService<IOptions<SeerrFixarrSettings>>().Value.JwtSigningKey;
-            return new TokenCreator(secret);
+            return new TokenCreator(TimeProvider.System ,secret);
         });
+        services.AddSingleton<UrlRedirectionCreator>();
+
     }
 
     public static void AddBlazor(this IServiceCollection services)

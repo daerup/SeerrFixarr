@@ -1,0 +1,19 @@
+@page "/{alias}"
+@rendermode RenderMode.InteractiveServer
+@using SeerrFixarr.App.Shared
+@inject UrlRedirectionCreator UrlRedirectionCreator
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public string Alias { get; set; } = string.Empty;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+        var redirectUrl = UrlRedirectionCreator.GetTargetOfRedirection(Alias);
+        if (!string.IsNullOrEmpty(redirectUrl))
+        {
+            Navigation.NavigateTo(redirectUrl, forceLoad: true);
+        }
+    }
+}

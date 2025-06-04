@@ -2,6 +2,7 @@ using Microsoft.Extensions.Time.Testing;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
 using SeerrFixarr.Api.Sonarr;
+using SeerrFixarr.Test.Infrastructure;
 using UnitsNet;
 
 namespace SeerrFixarr.Test;

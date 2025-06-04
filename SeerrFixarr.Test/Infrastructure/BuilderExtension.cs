@@ -1,22 +1,19 @@
+using System.Net;
+using Refit;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
 using SeerrFixarr.Api.Sonarr;
 using SeerrFixarr.App.Runners.Webhook;
 
-namespace SeerrFixarr.Test;
+namespace SeerrFixarr.Test.Infrastructure;
 
-internal record UserWithSettings(User User, UserLocalSettings Settings)
-{
-    public static implicit operator User(UserWithSettings user) => user.User;
-}
-
-internal static class Extension
+internal static class BuilderExtension
 {
     public static Movie InCollection(this Movie movie, Collection collection) => movie with { Collection = collection };
     public static Movie WithFile(this Movie movie, MovieFile file) => movie with { HasFile = true, MovieFile = file };
     public static Episode WithFile(this Episode episode, EpisodeFile file) => episode with { HasFile = true, EpisodeFile = file };
 
-    public static UserWithSettings WithLocale(this User user, string locale) => new UserWithSettings(user,
+    public static UserWithSettings WithLocale(this User user, string locale) => new(user,
       new UserLocalSettings
       {
         Username = user.DisplayName,
@@ -92,3 +89,11 @@ internal static class Extension
         }
     }
 }
+
+internal record UserWithSettings(User User, UserLocalSettings Settings)
+{
+    public static implicit operator User(UserWithSettings user) => user.User;
+}
+
+internal class FakeApiException(Exception e) : ApiException(e.Message, new HttpRequestMessage(), HttpMethod.Post, null,
+    HttpStatusCode.InternalServerError, null, new HttpResponseMessage().Headers, null!, e);

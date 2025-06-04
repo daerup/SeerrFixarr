@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
+using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.Runners.Webhook;
+using SeerrFixarr.App.Shared;
 using Serilog;
 
 namespace SeerrFixarr.App.Extensions;
@@ -54,6 +56,20 @@ public static class ApplicationExtensions
                 body.ReportedByUsername);
             await runner.RunAsync(body);
             return Results.Ok();
+        });
+        
+        app.MapPost("/createAlias", ([FromServices] TokenCreator tokenCreator, [FromServices] UrlRedirectionCreator urlRedirectionCreator, int id, int mediaType) =>
+        {
+            var mediaTypeEnum = (MediaType)mediaType;
+            var token = tokenCreator.CreateToken(id, mediaTypeEnum, TimeSpan.FromDays(1));
+            var alias = "hund";
+            urlRedirectionCreator.AddRedirection(alias, token);
+            var url = urlRedirectionCreator.GetTargetOfRedirection(alias);
+            return Results.Ok(new
+            {
+                Token = token,
+                Url = url
+            });
         });
     }
 }

@@ -7,7 +7,7 @@ using SeerrFixarr.Api.Radarr;
 using SeerrFixarr.Api.Sonarr;
 using SeerrFixarr.App.Runners;
 
-namespace SeerrFixarr.Test;
+namespace SeerrFixarr.Test.Infrastructure;
 
 public static class WebApplicationFactoryExtension
 {

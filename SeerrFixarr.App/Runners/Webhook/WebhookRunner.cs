@@ -11,7 +11,7 @@ internal class WebhookRunner(CultureScopeFactory scopeFactory, IOverseerrApi ove
         var issue = await overseerr.GetIssue(body.IssueId);
         var (username, locale) = await overseerr.GetLocalSettingsOfUser(issue.CreatedBy.Id);
 
-        using var culture = scopeFactory.FromLocale(username, locale);
+        using var translationCulture = scopeFactory.FromLocale(username, locale);
         await (issue.Media.MediaType switch
         {
             MediaType.Movie => radarrRunner.HandleMovieIssue(issue),
