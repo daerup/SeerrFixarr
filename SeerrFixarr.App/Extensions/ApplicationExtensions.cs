@@ -58,13 +58,13 @@ public static class ApplicationExtensions
             return Results.Ok();
         });
         
-        app.MapPost("/createAlias", ([FromServices] TokenCreator tokenCreator, [FromServices] UrlRedirectionCreator urlRedirectionCreator, int id, int mediaType) =>
+        app.MapPost("/createAlias", ([FromServices] TokenCreator tokenCreator, [FromServices] RedirectKeyManager urlRedirectionCreator, int id, int mediaType) =>
         {
             var mediaTypeEnum = (MediaType)mediaType;
             var token = tokenCreator.CreateToken(id, mediaTypeEnum, TimeSpan.FromDays(1));
             var alias = "hund";
             urlRedirectionCreator.AddRedirection(alias, token);
-            var url = urlRedirectionCreator.GetTargetOfRedirection(alias);
+            var url = urlRedirectionCreator.GetRedirectionTargetFromKey(alias);
             return Results.Ok(new
             {
                 Token = token,

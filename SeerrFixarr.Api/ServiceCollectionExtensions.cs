@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Refit;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Radarr;
@@ -14,20 +13,20 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddRefitClient<IRadarrApi>()
-            .ConfigureApiClient<SeerrFixarrSettings>(settings => settings.Radarr);
+            .ConfigureApiClient(settings => settings.Radarr);
         services
             .AddRefitClient<ISonarrApi>()
-            .ConfigureApiClient<SeerrFixarrSettings>(settings => settings.Sonarr);
+            .ConfigureApiClient(settings => settings.Sonarr);
         services
             .AddRefitClient<IOverseerrApi>()
-            .ConfigureApiClient<SeerrFixarrSettings>(settings => settings.Overseerr);
+            .ConfigureApiClient(settings => settings.Overseerr);
     }
     
-    private static void ConfigureApiClient<TSettings>(this IHttpClientBuilder builder, Func<TSettings, ApiSettings> configSelector) where TSettings : class, new()
+    private static void ConfigureApiClient(this IHttpClientBuilder builder, Func<SeerrFixarrSettings, ApiSettings> configSelector)
     {
         builder.ConfigureHttpClient((serviceProvider, client) =>
         {
-            var (apiUrl, apiKey) = configSelector(serviceProvider.GetRequiredService<IOptions<TSettings>>().Value);
+            var (apiUrl, apiKey) = configSelector(serviceProvider.GetRequiredService<SeerrFixarrSettings>());
             client.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
             client.BaseAddress = new Uri(apiUrl);
         });

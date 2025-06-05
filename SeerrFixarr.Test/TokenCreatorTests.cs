@@ -146,7 +146,7 @@ public class TokenCreatorTests
         // Arrange
         var token = "dummy-token";
         var eventTriggered = false;
-        _testee.OnTokenInvalidated += _ => eventTriggered = true;
+        _testee.OnTokenRevoked += _ => eventTriggered = true;
 
         // Act
         _testee.RevokeToken(token);
@@ -165,7 +165,7 @@ public class TokenCreatorTests
         var token = _testee.CreateToken(id, mediaType, expiresIn);
         _testee.RevokeToken(token);
         var eventTriggered = false;
-        _testee.OnTokenInvalidated += _ => eventTriggered = true;
+        _testee.OnTokenRevoked += _ => eventTriggered = true;
 
         // Act
         _timeProvider.Advance(TimeSpan.FromDays(10));

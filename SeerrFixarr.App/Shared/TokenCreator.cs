@@ -15,7 +15,7 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
     private const string IdClaimString = "id";
     private const string MediaTypeClaimString = "mediaType";
 
-    public event Action<string> OnTokenInvalidated = delegate { };
+    public event Action<string> OnTokenRevoked = delegate { };
     
     public string CreateToken(int id, MediaType mediaType, TimeSpan expiresIn)
     {
@@ -41,7 +41,7 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
         lock (_lock)
         {
             _revokedTokens.Add(token);
-            OnTokenInvalidated(token);
+            OnTokenRevoked(token);
         }
     }
 
@@ -67,7 +67,7 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
                     var expired = jwtToken.ValidTo < now;
                     if (expired)
                     {
-                        OnTokenInvalidated(token);
+                        OnTokenRevoked(token);
                     }
                     return expired;
                 }

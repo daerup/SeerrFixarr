@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using SeerrFixarr.Api.Overseerr;
+using SeerrFixarr.App.KeyProvider;
 using SeerrFixarr.App.Runners;
 using SeerrFixarr.App.Runners.Radarr;
 using SeerrFixarr.App.Runners.Sonarr;
@@ -33,6 +34,7 @@ public static class BuilderExtensions
             .AddEnvironmentVariables()
             .AddUserSecrets(Assembly.GetExecutingAssembly(), optional);
         builder.Services.Configure<SeerrFixarrSettings>(builder.Configuration);
+        builder.Services.AddTransient<SeerrFixarrSettings>(sp => sp.GetRequiredService<IOptionsMonitor<SeerrFixarrSettings>>().CurrentValue);
     }
 
     public static void AddLogging(this WebApplicationBuilder builder)
@@ -54,11 +56,12 @@ public static class BuilderExtensions
         services.AddScoped<SonarrRunner>();
         services.AddSingleton<TokenCreator>(serviceProvider =>
         {
-            var secret = serviceProvider.GetRequiredService<IOptions<SeerrFixarrSettings>>().Value.JwtSigningKey;
-            return new TokenCreator(TimeProvider.System ,secret);
+            var secret = serviceProvider.GetRequiredService<SeerrFixarrSettings>().JwtSigningKey;
+            return new TokenCreator(TimeProvider.System, secret);
         });
-        services.AddSingleton<UrlRedirectionCreator>();
-
+        services.AddSingleton<RedirectKeyManager>();
+        services.AddSingleton<RedirectKeyProviderFactory>();
+        services.AddTransient<GuidRedirectKeyProvider>();
     }
 
     public static void AddBlazor(this IServiceCollection services)

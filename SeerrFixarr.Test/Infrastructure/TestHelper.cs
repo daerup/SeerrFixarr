@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using SeerrFixarr.App.Runners;
 
-namespace SeerrFixarr.Test;
+namespace SeerrFixarr.Test.Infrastructure;
 
 internal static class TestHelper
 {

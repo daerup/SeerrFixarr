@@ -6,4 +6,5 @@ public record SeerrFixarrSettings
     public ApiSettings Radarr { get; init; } = null!;
     public ApiSettings Sonarr { get; init; } = null!;
     public string JwtSigningKey { get; init; } = null!;
+    public Dictionary<string, List<string>> UserRedirectKeyPool { get; init; } = null!;
 }
