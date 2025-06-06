@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using Microsoft.AspNetCore.WebUtilities;
+using SeerrFixarr.Shared;
 
 namespace SeerrFixarr.App.Shared;
 

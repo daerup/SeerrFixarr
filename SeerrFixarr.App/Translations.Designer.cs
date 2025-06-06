@@ -123,6 +123,51 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ❓ How do you want to proceed? Type the number of the corresponding option below ⬇️.
+        /// </summary>
+        internal static string HowToProceed {
+            get {
+                return ResourceManager.GetString("HowToProceed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 😟 Sorry, I didn&apos;t catch that.
+        /// </summary>
+        internal static string HowToProceedNotFound {
+            get {
+                return ResourceManager.GetString("HowToProceedNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1️⃣  Choose a release for me.
+        /// </summary>
+        internal static string HowToProceedOption1 {
+            get {
+                return ResourceManager.GetString("HowToProceedOption1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2️⃣ Let me choose.
+        /// </summary>
+        internal static string HowToProceedOption2 {
+            get {
+                return ResourceManager.GetString("HowToProceedOption2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 🤡 Arent you a smart one, try again.
+        /// </summary>
+        internal static string HowToProceedOptionOutOfRange {
+            get {
+                return ResourceManager.GetString("HowToProceedOptionOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 🥺 Could not grab file for &apos;{0}&apos;.
         /// </summary>
         internal static string ItemNotGrabbed {

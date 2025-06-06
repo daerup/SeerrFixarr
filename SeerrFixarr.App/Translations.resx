@@ -66,4 +66,19 @@
   <data name="WholeShowFaulty" xml:space="preserve">
     <value>❌ Whole shows cannot be automatically fixed. Please recreate the issue with a specific episode.</value>
   </data>
+    <data name="HowToProceed" xml:space="preserve">
+        <value>❓ How do you want to proceed? Type the number of the corresponding option below ⬇️</value>
+    </data>
+    <data name="HowToProceedOption1" xml:space="preserve">
+        <value>1️⃣  Choose a release for me</value>
+    </data>
+    <data name="HowToProceedOption2" xml:space="preserve">
+        <value>2️⃣ Let me choose</value>
+    </data>
+    <data name="HowToProceedOptionOutOfRange" xml:space="preserve">
+        <value>🤡 Arent you a smart one, try again</value>
+    </data>
+    <data name="HowToProceedNotFound" xml:space="preserve">
+        <value>😟 Sorry, I didn't catch that</value>
+    </data>
 </root>

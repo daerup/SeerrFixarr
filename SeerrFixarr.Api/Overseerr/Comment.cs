@@ -8,4 +8,5 @@ public record Comment
     public User User { get; init; } = null!;
     
     public static implicit operator Comment(string message) => new() { Message = message };
+    
 }

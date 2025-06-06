@@ -52,6 +52,7 @@ public static class BuilderExtensions
         services.AddScoped<CultureScopeFactory>();
         services.AddScoped<ITimeOutProvider, TimeOutProvider>();
         services.AddScoped<WebhookRunner>();
+        services.AddScoped<InteractiveRunner>();
         services.AddScoped<RadarrRunner>();
         services.AddScoped<SonarrRunner>();
         services.AddSingleton<TokenCreator>(serviceProvider =>

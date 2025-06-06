@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using SeerrFixarr.Api.Overseerr;
@@ -51,28 +52,11 @@ public static class ApplicationExtensions
 
     public static void MapOverseerrWebhook(this WebApplication app)
     {
-        app.MapPost("/webhook", async ([FromServices] WebhookRunner runner, [FromBody] WebhookIssueRoot body) =>
+        app.MapPost("/webhook", async ([FromServices] WebhookRunner runner, [FromBody] WebhookIssueRoot root) =>
         {
-            Log.Information("Webhook received for Issue #{IssueId} reported by {username}", body.IssueId,
-                body.ReportedByUsername);
-            await runner.RunAsync(body);
+            Log.Information("Webhook received for Issue #{IssueId} reported by {username}", root.IssueId, root.ReportedByUsername);
+            await runner.RunAsync(root);
             return Results.Ok();
-        });
-        
-        app.MapPost("/createAlias", ([FromServices] TokenCreator tokenCreator, [FromServices] RedirectKeyManager urlRedirectionCreator, [FromServices] RedirectKeyFactory factory, string user, int id, int mediaType) =>
-        {
-            var mediaTypeEnum = (MediaType)mediaType;
-            var token = tokenCreator.CreateToken(id, mediaTypeEnum, TimeSpan.FromDays(1));
-            var key = factory.GetKeyForIdentifier(user);
-            urlRedirectionCreator.AddRedirection(key, token);
-            var url = urlRedirectionCreator.GetRedirectionTargetFromKey(key);
-            const string host = "http://localhost:8080";
-            return Results.Ok(new
-            {
-                Token = token,
-                FullLink = host + url,
-                ShortenedLink = host + $"/{key}",
-            });
         });
     }
 }
