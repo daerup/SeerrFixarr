@@ -1,5 +1,4 @@
 using FakeItEasy;
-using Microsoft.Extensions.DependencyInjection;
 using SeerrFixarr.App.KeyProvider;
 using SeerrFixarr.App.Shared;
 using SeerrFixarr.Shared.Settings;
@@ -20,7 +19,7 @@ public class RedirectKeyProviderFactoryTests
         var testee = new RedirectKeyProviderFactory(settings, _guidProvider, _redirectKeyManager);
         
         // Act
-        var provider = testee.GetKeyProviderForUser("user1");
+        var provider = testee.GetKeyProviderForIdentifier("user1");
 
         // Assert
         provider.ShouldBeOfType<FixedRedirectKeyProvider>();
@@ -34,10 +33,11 @@ public class RedirectKeyProviderFactoryTests
         var testee = new RedirectKeyProviderFactory(settings, _guidProvider, _redirectKeyManager);
         
         // Act
-        var provider = testee.GetKeyProviderForUser("missing_user");
+        var provider = testee.GetKeyProviderForIdentifier("missing_user");
 
         // Assert
         provider.ShouldBe(_guidProvider);
+        
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class RedirectKeyProviderFactoryTests
         var testee = new RedirectKeyProviderFactory(settings, _guidProvider, _redirectKeyManager);
         
         // Act
-        var first = testee.GetKeyProviderForUser("user2");
-        var second = testee.GetKeyProviderForUser("user2");
+        var first = testee.GetKeyProviderForIdentifier("user2");
+        var second = testee.GetKeyProviderForIdentifier("user2");
 
         // Assert
         first.ShouldBe(second);

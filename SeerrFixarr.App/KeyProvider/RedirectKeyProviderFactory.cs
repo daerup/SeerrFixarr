@@ -11,7 +11,7 @@ public class RedirectKeyProviderFactory(
 {
     private readonly ConcurrentDictionary<string, IRedirectKeyProvider> _cache = new();
 
-    public IRedirectKeyProvider GetKeyProviderForUser(string username)
+    public IRedirectKeyProvider GetKeyProviderForIdentifier(string username)
     {
         return settings.UserRedirectKeyPool.TryGetValue(username, out var pool)
             ? _cache.GetOrAdd(username, _ => new FixedRedirectKeyProvider(pool.ToList(), redirectKeyManager))

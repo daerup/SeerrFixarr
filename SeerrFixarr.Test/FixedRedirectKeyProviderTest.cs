@@ -18,7 +18,7 @@ public class FixedRedirectKeyProviderTest
         var provider = new FixedRedirectKeyProvider([expectedKey], _redirectKeyManager);
 
         // Act
-        var key = provider.GetNextKey();
+        var key = provider.GetNext();
 
         // Assert
         key.ShouldBe(expectedKey);
@@ -32,9 +32,9 @@ public class FixedRedirectKeyProviderTest
         var provider = new FixedRedirectKeyProvider(keys, _redirectKeyManager);
 
         // Act
-        var firstKey = provider.GetNextKey();
-        var secondKey = provider.GetNextKey();
-        var thirdKey = provider.GetNextKey();
+        var firstKey = provider.GetNext();
+        var secondKey = provider.GetNext();
+        var thirdKey = provider.GetNext();
 
         // Assert
         firstKey.ShouldNotBeNull();
@@ -55,7 +55,7 @@ public class FixedRedirectKeyProviderTest
         var provider = new FixedRedirectKeyProvider(Array.Empty<string>(), _redirectKeyManager);
 
         // Act
-        var key = provider.GetNextKey();
+        var key = provider.GetNext();
 
         // Assert
         key.ShouldBeNull();
@@ -69,10 +69,10 @@ public class FixedRedirectKeyProviderTest
         var provider = new FixedRedirectKeyProvider(keys, _redirectKeyManager);
         
         // Act
-        provider.GetNextKey();
-        provider.GetNextKey();
-        var key = provider.GetNextKey();
-        var anotherKey = provider.GetNextKey();
+        provider.GetNext();
+        provider.GetNext();
+        var key = provider.GetNext();
+        var anotherKey = provider.GetNext();
 
         // Assert
         key.ShouldBeNull();
@@ -87,9 +87,9 @@ public class FixedRedirectKeyProviderTest
         var provider = new FixedRedirectKeyProvider(keys, _redirectKeyManager);
 
         // Act;
-        var firstKey = provider.GetNextKey();
+        var firstKey = provider.GetNext();
         _redirectKeyManager.InvokeOnRedirectionKeyDestroyed(firstKey!);
-        var secondKey = provider.GetNextKey();
+        var secondKey = provider.GetNext();
         
         // Assert
         secondKey.ShouldBe(firstKey);
@@ -105,7 +105,7 @@ public class FixedRedirectKeyProviderTest
         // Act
         _redirectKeyManager.InvokeOnRedirectionKeyCreated("key1");
         _redirectKeyManager.InvokeOnRedirectionKeyCreated("key2");
-        var key = provider.GetNextKey();
+        var key = provider.GetNext();
 
         // Assert
         key.ShouldBeNull();
@@ -117,7 +117,7 @@ public class FixedRedirectKeyProviderTest
         // Arrange
         var keys = new[] { "key1" };
         var provider = new FixedRedirectKeyProvider(keys, _redirectKeyManager);
-        var key = provider.GetNextKey();
+        var key = provider.GetNext();
         _redirectKeyManager.InvokeOnRedirectionKeyCreated(key!);
         
         // Act
@@ -147,11 +147,11 @@ public class FixedRedirectKeyProviderTest
         // Arrange
         var keys = new[] { "key1" };
         var provider = new FixedRedirectKeyProvider(keys, _redirectKeyManager);
-        var key = provider.GetNextKey();
+        var key = provider.GetNext();
         
         // Act
         _redirectKeyManager.InvokeOnRedirectionKeyDestroyed(key!);
-        var nextKey = provider.GetNextKey();
+        var nextKey = provider.GetNext();
         
         // Assert
         nextKey.ShouldBe(key);

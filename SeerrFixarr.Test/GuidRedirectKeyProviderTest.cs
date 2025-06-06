@@ -16,7 +16,7 @@ public class GuidRedirectKeyProviderTest
         var provider = new GuidRedirectKeyProvider(_redirectKeyManager);
 
         // Act
-        var key = provider.GetNextKey();
+        var key = provider.GetNext();
 
         // Assert
         key.ShouldNotBeNull();

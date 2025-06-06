@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using SeerrFixarr.App.Shared;
 
 namespace SeerrFixarr.App.KeyProvider;
@@ -13,7 +14,7 @@ public abstract class BaseRedirectKeyProvider : IRedirectKeyProvider
         redirectKeyManager.OnRedirectionKeyDestroyed += ReleaseKey;
     }
     
-    public string? GetNextKey()
+    public string? GetNext()
     {
         var unusedKeys = GetAvailableKeys().ToList();
         if (unusedKeys.Count == 0)
