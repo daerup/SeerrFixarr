@@ -95,10 +95,15 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AWebApplicationFactory_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2024_002E3_003Fresharper_002Dhost_003FSourcesCache_003Fb9d530da9120f3dc4c3946e352e827779a2ee2a1eec67fe8c9ff7ccb27f8e8_003FWebApplicationFactory_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AXunitTestRunnerBase_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2024_002E3_003Fresharper_002Dhost_003FSourcesCache_003Fce2d2ad9eaaed2963c2bf9c9a784d9e2318a18d2bce36839b17362e762b4e_003FXunitTestRunnerBase_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7a82b5d1_002D90e1_002D4345_002Daec9_002D5f5ad7455fff/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetNextKey_ShouldReturnNewGuid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5a243962_002D5ab4_002D4828_002D85ab_002D14b4172c976b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="FixedRedirectKeyProviderCacheTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::0AFB13D2-41FB-489B-8C52-F3FED9F49498::net10.0::SeerrFixarr.Test.FixedRedirectKeyProviderCacheTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7a82b5d1_002D90e1_002D4345_002Daec9_002D5f5ad7455fff/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetNextKey_ShouldReturnNewGuid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\daerup\Documents\repos\SeerrFixarr\SeerrFixarr.Test" Presentation="&amp;lt;SeerrFixarr.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e394bb2d_002D1f88_002D45b1_002D96df_002Dee2f67d72e20/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RedownloadFaultyMovie" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e394bb2d_002D1f88_002D45b1_002D96df_002Dee2f67d72e20/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RedownloadFaultyMovie" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\daerup\Documents\repos\SeerrFixarr\SeerrFixarr.Test" Presentation="&amp;lt;SeerrFixarr.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	

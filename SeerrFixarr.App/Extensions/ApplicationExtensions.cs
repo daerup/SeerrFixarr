@@ -59,12 +59,11 @@ public static class ApplicationExtensions
             return Results.Ok();
         });
         
-        app.MapPost("/createAlias", ([FromServices] TokenCreator tokenCreator, [FromServices] RedirectKeyManager urlRedirectionCreator, [FromServices] RedirectKeyProviderFactory factory, string user, int id, int mediaType) =>
+        app.MapPost("/createAlias", ([FromServices] TokenCreator tokenCreator, [FromServices] RedirectKeyManager urlRedirectionCreator, [FromServices] RedirectKeyFactory factory, string user, int id, int mediaType) =>
         {
             var mediaTypeEnum = (MediaType)mediaType;
             var token = tokenCreator.CreateToken(id, mediaTypeEnum, TimeSpan.FromDays(1));
-            var provider = factory.GetKeyProviderForIdentifier(user);
-            var key = provider.GetNext() ?? "bliblablup";
+            var key = factory.GetKeyForIdentifier(user);
             urlRedirectionCreator.AddRedirection(key, token);
             var url = urlRedirectionCreator.GetRedirectionTargetFromKey(key);
             const string host = "http://localhost:8080";

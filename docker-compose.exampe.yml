@@ -16,6 +16,8 @@ services:
       RADARR__APIKEY: ${RADARR_API_KEY}
       SONARR__APIURL: http://sonarr:8989/api/v3
       SONARR__APIKEY: ${SONARR_API_KEY}
+      JWTSIGNINGKEY: "super-secret-key-used-for-signing"
+      USERREDIRECTKEYPOOL__SOMEUSER: key1,key2
     networks:
       - media
     depends_on:

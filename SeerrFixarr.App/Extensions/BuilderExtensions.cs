@@ -60,8 +60,9 @@ public static class BuilderExtensions
             return new TokenCreator(TimeProvider.System, secret);
         });
         services.AddSingleton<RedirectKeyManager>();
-        services.AddSingleton<RedirectKeyProviderFactory>();
         services.AddTransient<GuidRedirectKeyProvider>();
+        services.AddSingleton<FixedRedirectKeyProviderCache>();
+        services.AddScoped<RedirectKeyFactory>();
     }
 
     public static void AddBlazor(this IServiceCollection services)
