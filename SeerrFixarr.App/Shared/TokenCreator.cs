@@ -17,20 +17,21 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
 
     public event Action<string> OnTokenRevoked = delegate { };
     
-    public string CreateToken(int id, MediaType mediaType, TimeSpan expiresIn)
+    public string CreateToken(int mediaId, MediaType mediaType, TimeSpan expiresIn)
     {
         var claims = new[]
         {
-            new Claim(IdClaimString, id.ToString()),
+            new Claim(IdClaimString, mediaId.ToString()),
             new Claim(MediaTypeClaimString, mediaType.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        
+
+        var dateTime = timeProvider.GetUtcNow().UtcDateTime;
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: timeProvider.GetUtcNow().Add(expiresIn).DateTime,
+            expires: dateTime.Add(expiresIn),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

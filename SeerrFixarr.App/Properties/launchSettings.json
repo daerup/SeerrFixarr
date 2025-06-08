@@ -3,7 +3,7 @@
   "profiles": {
     "SeerrFixarr.App": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "select",
       "applicationUrl": "http://localhost:8080",
       "environmentVariables": {

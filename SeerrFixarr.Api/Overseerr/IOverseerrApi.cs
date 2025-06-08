@@ -17,7 +17,7 @@ public interface IOverseerrApi
     Task DeleteIssue(int issueId);
     
     [Post("/issue/{issueId}/comment")]
-    Task PostIssueComment(int issueId, [Body] Comment message);
+    Task PostIssueComment(int issueId, [Body] Comment comment);
     
     [Post("/issue/{issueId}/{status}")]
     Task UpdateIssueStatus(int issueId, IssueStatus status);

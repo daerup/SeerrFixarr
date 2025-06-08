@@ -1,17 +1,21 @@
 using SeerrFixarr.Api.Overseerr;
+using SeerrFixarr.App.KeyProvider;
 using SeerrFixarr.App.Runners.Radarr;
 using SeerrFixarr.App.Runners.Sonarr;
-using SeerrFixarr.Shared;
-using Serilog;
+using SeerrFixarr.App.Shared;
+using SeerrFixarr.Shared.Settings;
 
 namespace SeerrFixarr.App.Runners.Webhook;
 
 internal class WebhookRunner(
     CultureScopeFactory scopeFactory,
     IOverseerrApi overseerr,
-    InteractiveRunner interactiveRunner,
     RadarrRunner radarrRunner,
-    SonarrRunner sonarrRunner)
+    SonarrRunner sonarrRunner,
+    TokenCreator tokenCreator,
+    RedirectKeyManager redirectKeyManager,
+    RedirectKeyFactory redirectKeyFactory,
+    SeerrFixarrSettings settings)
 {
     public async Task RunAsync(WebhookIssueRoot body)
     {
@@ -22,27 +26,8 @@ internal class WebhookRunner(
         await (body.NotificationType switch
         {
             NotificationType.ISSUE_CREATED => HandleIssueCreated(issue),
-            NotificationType.ISSUE_COMMENT => HandleIssueComment(issue),
             NotificationType.ISSUE_REOPENED => HandleIssueReopened(issue),
         });
-    }
-
-    private async Task HandleIssueReopened(Issue issue)
-    {
-        await interactiveRunner.PromptUserForAction(issue);
-    }
-
-    private async Task HandleIssueComment(Issue issue)
-    {
-        var newestComment = issue.Comments.OrderByDescending(c => c.CreatedAt).First();
-        var isBotComment = newestComment.Message.First() == Constants.BotIdentificationCharacter; 
-        if (isBotComment)
-        {
-            Log.Debug("Ignoring comment from bot on issue #{IssueId}", issue.Id);
-            return;
-        }
-
-        await interactiveRunner.FollowUserInstructions(issue, newestComment);
     }
 
     private async Task HandleIssueCreated(Issue issue)
@@ -53,5 +38,14 @@ internal class WebhookRunner(
             MediaType.Tv => sonarrRunner.HandleEpisodeIssue(issue),
             _ => Task.CompletedTask
         });
+    }
+
+    private async Task HandleIssueReopened(Issue issue)
+    {
+        var token = tokenCreator.CreateToken(issue.Media.Id, issue.Media.MediaType, TimeSpan.FromMinutes(10));
+        var key = redirectKeyFactory.GetKeyForIdentifier(issue.CreatedBy.Username);
+        redirectKeyManager.AddRedirection(key, token);
+        var redirectUrl = $"{settings.ExternalHost}/{key}";
+        await overseerr.PostIssueComment(issue.Id, redirectUrl);
     }
 }

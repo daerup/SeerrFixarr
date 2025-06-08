@@ -1,4 +1,3 @@
-using CSharpFunctionalExtensions;
 using SeerrFixarr.App.Shared;
 
 namespace SeerrFixarr.App.KeyProvider;

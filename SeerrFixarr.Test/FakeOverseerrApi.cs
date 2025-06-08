@@ -44,7 +44,7 @@ internal class FakeOverseerrApi : IOverseerrApi
         return Task.CompletedTask;
     }
 
-    public Task PostIssueComment(int issueId, Comment message)
+    public Task PostIssueComment(int issueId, Comment comment)
     {
         if (!Comments.TryGetValue(issueId, out var value))
         {
@@ -52,7 +52,7 @@ internal class FakeOverseerrApi : IOverseerrApi
             Comments[issueId] = value;
         }
 
-        value.Add(message);
+        value.Add(comment);
         return Task.CompletedTask;
     }
 

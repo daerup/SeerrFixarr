@@ -1,4 +1,5 @@
 using System.Reflection;
+using Meziantou.Framework;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using SeerrFixarr.Api.Overseerr;
@@ -19,9 +20,13 @@ public static class BuilderExtensions
 {
     public static void AddDataProtection(this WebApplicationBuilder builder)
     {
+        var keyStoragePath = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true"
+            ? "/keys"
+            : FullPath.GetFolderPath(Environment.SpecialFolder.ApplicationData) / nameof(SeerrFixarr) / "keys";
+
         builder.Services
             .AddDataProtection()
-            .UseEphemeralDataProtectionProvider()
+            .PersistKeysToFileSystem(new DirectoryInfo(keyStoragePath))
             .SetApplicationName(nameof(SeerrFixarr));
     }
 
@@ -52,7 +57,6 @@ public static class BuilderExtensions
         services.AddScoped<CultureScopeFactory>();
         services.AddScoped<ITimeOutProvider, TimeOutProvider>();
         services.AddScoped<WebhookRunner>();
-        services.AddScoped<InteractiveRunner>();
         services.AddScoped<RadarrRunner>();
         services.AddScoped<SonarrRunner>();
         services.AddSingleton<TokenCreator>(serviceProvider =>

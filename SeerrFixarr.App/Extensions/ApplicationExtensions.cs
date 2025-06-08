@@ -1,10 +1,6 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
-using SeerrFixarr.Api.Overseerr;
-using SeerrFixarr.App.KeyProvider;
 using SeerrFixarr.App.Runners.Webhook;
-using SeerrFixarr.App.Shared;
 using Serilog;
 
 namespace SeerrFixarr.App.Extensions;

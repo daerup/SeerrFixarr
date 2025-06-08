@@ -221,9 +221,9 @@ else
             { Age: 1 } => "1 day",
             { Age: > 1 } => $"{context.Age} days",
             { AgeHours: 1 } => "1 hour",
-            { AgeHours: > 1 } => $"{context.AgeHours} hours",
+            { AgeHours: > 1 } => $"{context.AgeHours:N2} hours",
             { AgeMinutes: 1 } => "1 minute",
-            { AgeMinutes: > 1 } => $"{context.AgeMinutes} minutes",
+            { AgeMinutes: > 1 } => $"{context.AgeMinutes:N2} minutes",
             _ => "Just now"
         };
     }

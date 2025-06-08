@@ -1,6 +1,4 @@
 using SeerrFixarr.Api.Overseerr;
-using SeerrFixarr.App.Shared;
-using SeerrFixarr.Shared;
 using Serilog;
 
 namespace SeerrFixarr.App;
@@ -13,10 +11,9 @@ public class OverseerrApiLoggingInterceptor(IOverseerrApi inner) : IOverseerrApi
     public Task DeleteIssue(int issueId) => inner.DeleteIssue(issueId);
 
     public Task UpdateIssueStatus(int issueId, IssueStatus status) => inner.UpdateIssueStatus(issueId, status);
-    public Task PostIssueComment(int issueId, Comment message)
+    public Task PostIssueComment(int issueId, Comment comment)
     {
-        Log.Information("Posting Comment on Issue #{IssueId}: {Message}", issueId, message.Message);
-        var markedMessage = message with { Message = $"{Constants.BotIdentificationCharacter}{message.Message}" };
-        return inner.PostIssueComment(issueId, markedMessage);
+        Log.Information("Posting Comment on Issue #{IssueId}: {Message}", issueId, comment.Message);
+        return inner.PostIssueComment(issueId, comment);
     }
 }
