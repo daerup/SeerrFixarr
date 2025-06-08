@@ -1,6 +1,8 @@
+using CSharpFunctionalExtensions;
+
 namespace SeerrFixarr.App.KeyProvider;
 
 public interface IRedirectKeyProvider
 {
-    string? GetNext();
+    Maybe<string> GetNext();
 }

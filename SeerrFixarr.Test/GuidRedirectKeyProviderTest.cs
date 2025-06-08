@@ -19,7 +19,7 @@ public class GuidRedirectKeyProviderTest
         var key = provider.GetNext();
 
         // Assert
-        key.ShouldNotBeNull();
-        key.Length.ShouldBe(5);
+        key.HasValue.ShouldBe(true);
+        key.Value.Length.ShouldBe(5);
     }
 }

@@ -10,12 +10,16 @@
 @inject IRadarrApi RadarrApi
 @inject ISonarrApi SonarrApi
 
-@if (_validToken == false)
+@if (_validToken is null)
+{
+    <Text>Validating token, hang on...</Text>
+}
+else if (_validToken is false)
 {
     <Alert Icon="error" Title="Error..." Type="AlertType.Destructive"
            Description="Invalid one-time token provided. "/>
 }
-else if (Releases == null)
+else if (Releases is null)
 {
     @if (!string.IsNullOrEmpty(SelectedLottieUrl))
     {
@@ -120,7 +124,7 @@ else
             If this turns out to be a bad release, I will punch you.
         </Content>
         <Footer>
-            <Button Text="Cancel" Type="ButtonType.Destructive" OnClick="() => HandleCancel()"/>
+            <Button Text="Cancel" OnClick="() => HandleCancel()" Type="ButtonType.Destructive" />
             <Button Text="Continue" OnClick="() => HandleConfirm()" Type="ButtonType.Success"/>
         </Footer>
     </Dialog>
@@ -140,7 +144,7 @@ else
 
     SortModel _sortModel = new() { Header = "Default", IsAscending = true };
 
-    private readonly string[] LottieUrls =
+    private readonly string[] _lottieUrls =
     [
         "https://lottie.host/a627b5c0-0ab3-4c49-93bb-a932abad340c/0Gqo2a9cNJ.json", // Among Us
         "https://lottie.host/71193800-a90c-4077-9b4f-14d2500ab554/e6fEgiQUvj.json" // Dinosaur
@@ -148,7 +152,7 @@ else
 
     protected override void OnAfterRender(bool firstRender)
     {
-        SelectedLottieUrl = LottieUrls[new Random().Next(LottieUrls.Length)];
+        SelectedLottieUrl = _lottieUrls[new Random().Next(_lottieUrls.Length)];
         if (firstRender)
         {
             LoadReleasesAsync().ContinueWith(_ => HandleSorting(_sortModel));
@@ -251,7 +255,6 @@ else
 
     void OnReleaseSelected(InteractiveRelease obj)
     {
-        if (obj is null) return;
         _selectedRelease = obj;
         _showConfirm = true;
     }
