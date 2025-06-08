@@ -11,5 +11,5 @@ public record SeerrFixarrSettings
     {
         get;
         init => field = new Dictionary<string, List<string>>(value, StringComparer.OrdinalIgnoreCase);
-    } = null!;
+    } = new(StringComparer.OrdinalIgnoreCase);
 }

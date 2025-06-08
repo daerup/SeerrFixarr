@@ -12,10 +12,12 @@
       SONARR__APIURL: ${SONARR_API_URL}
       SONARR__APIKEY: ${SONARR_API_KEY}
       JWTSIGNINGKEY: "super-secret-key-used-for-signing"
-      USERREDIRECTKEYPOOL__SOMEUSER: key1,key2
+      USERREDIRECTKEYPOOL: ${KEYPOOL}
     ports:
       - 8080:80
     build:
       context: .
       dockerfile: SeerrFixarr.App/Dockerfile
+    volumes:
+      - ${APPDATA}\SeerrFixarr\keys:/keys
     image: seerrfixarr.app
