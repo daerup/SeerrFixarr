@@ -37,9 +37,14 @@ public static class BuilderExtensions
             .AddJsonFile("appsettings.json", optional, reloadOnChange)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName.ToLower()}.json", optional, reloadOnChange)
             .AddEnvironmentVariables()
+            .Add(new UserRedirectKeyPoolConfigurationSource())
             .AddUserSecrets(Assembly.GetExecutingAssembly(), optional);
         builder.Services.Configure<SeerrFixarrSettings>(builder.Configuration);
-        builder.Services.AddTransient<SeerrFixarrSettings>(sp => sp.GetRequiredService<IOptionsMonitor<SeerrFixarrSettings>>().CurrentValue);
+        builder.Services.AddTransient<SeerrFixarrSettings>(sp =>
+        {
+            var seerrFixarrSettings = sp.GetRequiredService<IOptionsMonitor<SeerrFixarrSettings>>().CurrentValue;
+            return seerrFixarrSettings;
+        });
     }
 
     public static void AddLogging(this WebApplicationBuilder builder)
