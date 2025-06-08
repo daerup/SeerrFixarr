@@ -4,7 +4,7 @@ namespace SeerrFixarr.App.Runners.Webhook;
 
 internal class CultureScopeFactory
 {
-    internal CultureScope FromLocale(string username, string locale)
+    internal CultureScope FromLocale(string locale)
     { 
         var original = Thread.CurrentThread.CurrentUICulture;
         var newCulture = new CultureInfo(locale);

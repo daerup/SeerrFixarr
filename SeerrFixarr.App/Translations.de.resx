@@ -63,4 +63,13 @@
     <data name="WholeShowFaulty" xml:space="preserve">
     <value>❌ Ganze Serien können nicht automatisch behoben werden. Bitte erstellen Sie das Problem neu mit einer bestimmten Episode.</value>
   </data>
+    <data name="InteractiveInstructions" xml:space="preserve">
+        <value>📎 Kopiere die URL unten und wähle anschliessend eine Datei aus der Liste ⬇️</value>
+    </data>
+    <data name="InteractiveSorted" xml:space="preserve">
+        <value>Tipp: Die Liste ist bereits sortiert – der erste Eintrag ist wahrscheinlich die beste Wahl 👉</value>
+    </data>
+    <data name="InteractiveGrabbed" xml:space="preserve">
+        <value>⬇️ Datei wird heruntergeladen. Problem wird jetzt geschlossen</value>
+    </data>
 </root>

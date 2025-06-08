@@ -6,23 +6,27 @@ using SeerrFixarr.Api.Overseerr;
 
 namespace SeerrFixarr.App.Shared;
 
-public record TokenData(int Id, MediaType MediaType);
+public record TokenData(int IssueId, int MediaId, MediaType MediaType, string UserLocale);
 
 public class TokenCreator(TimeProvider timeProvider, string secret)
 {
     private readonly Lock _lock = new();
     private readonly HashSet<string> _revokedTokens = [];
-    private const string IdClaimString = "id";
-    private const string MediaTypeClaimString = "mediaType";
+    private const string IssueIdClaimString = nameof(IssueIdClaimString);
+    private const string MediaIdClaimString = nameof(MediaIdClaimString);
+    private const string MediaTypeClaimString = nameof(MediaTypeClaimString);
+    private const string UserLocaleClaimString = nameof(UserLocaleClaimString);
 
     public event Action<string> OnTokenRevoked = delegate { };
-    
-    public string CreateToken(int mediaId, MediaType mediaType, TimeSpan expiresIn)
+
+    public string CreateToken(int issueId, int mediaId, MediaType mediaType, TimeSpan expiresIn, string locale)
     {
         var claims = new[]
         {
-            new Claim(IdClaimString, mediaId.ToString()),
-            new Claim(MediaTypeClaimString, mediaType.ToString())
+            new Claim(IssueIdClaimString, issueId.ToString()),
+            new Claim(MediaIdClaimString, mediaId.ToString()),
+            new Claim(MediaTypeClaimString, mediaType.ToString()),
+            new Claim(UserLocaleClaimString, locale)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
@@ -70,6 +74,7 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
                     {
                         OnTokenRevoked(token);
                     }
+
                     return expired;
                 }
                 catch
@@ -89,20 +94,25 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
             tokenData = null!;
             return false;
         }
-        
+
         var tokenHandler = new JwtSecurityTokenHandler();
-        
+
         try
         {
             var tokenValidationParameters = CreateTokenValidationParameters();
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
-            
-            var idClaim = principal.FindFirst(IdClaimString)?.Value;
-            var typeClaim = principal.FindFirst(MediaTypeClaimString)?.Value;
 
-            if (int.TryParse(idClaim, out var id) && Enum.TryParse<MediaType>(typeClaim, out var mediaType))
+            var issueIdClaim = principal.FindFirst(IssueIdClaimString)?.Value;
+            var mediaIdClaim = principal.FindFirst(MediaIdClaimString)?.Value;
+            var typeClaim = principal.FindFirst(MediaTypeClaimString)?.Value;
+            var localeClaim = principal.FindFirst(UserLocaleClaimString)?.Value;
+
+            if (int.TryParse(issueIdClaim, out var issueId) && 
+                int.TryParse(mediaIdClaim, out var mediaId) &&
+                Enum.TryParse<MediaType>(typeClaim, out var mediaType) &&
+                localeClaim is {} locale)
             {
-                tokenData = new TokenData(id, mediaType);
+                tokenData = new TokenData(issueId, mediaId, mediaType, locale);
                 return true;
             }
 
@@ -122,7 +132,7 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
         return new TokenValidationParameters
         {
             ValidateAudience = false,
-            ValidateIssuer = false ,
+            ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),

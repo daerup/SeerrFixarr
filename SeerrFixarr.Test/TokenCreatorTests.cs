@@ -22,12 +22,14 @@ public class TokenCreatorTests
     public void CreateToken_ShouldGenerateToken()
     {
         // Arrange
-        var id = 1;
+        var issueId = 1;
+        var mediaId = 1;
         var mediaType = MediaType.Movie;
+        var locale = "en-US";
         var expiresIn = TimeSpan.FromHours(1);
 
         // Act
-        var token = _testee.CreateToken(id, mediaType, expiresIn);
+        var token = _testee.CreateToken(issueId, mediaId, mediaType, expiresIn, locale);
 
         // Assert
         token.ShouldNotBeNull();
@@ -38,10 +40,12 @@ public class TokenCreatorTests
     public void CreateToken_ShouldGenerateValidToken()
     {
         // Arrange
-        var id = 1;
+        var issueId = 1;
+        var mediaId = 1;
         var mediaType = MediaType.Movie;
+        var locale = "en-US";
         var expiresIn = TimeSpan.FromHours(1);
-        var token = _testee.CreateToken(id, mediaType, expiresIn);
+        var token = _testee.CreateToken(issueId, mediaId, mediaType, expiresIn, locale);
 
         // Act
         var claimsPrincipal = TestTokenValidator.TryValidateToken(token, _256BitSecret, _timeProvider, out _);
@@ -55,10 +59,12 @@ public class TokenCreatorTests
     public void InvalidateToken_ShouldMarkTokenAsRevoked()
     {
         // Arrange
-        var id = 1;
+        var issueId = 1;
+        var mediaId = 1;
         var mediaType = MediaType.Movie;
+        var locale = "en-US";
         var expiresIn = TimeSpan.FromHours(1);
-        var token = _testee.CreateToken(id, mediaType, expiresIn);
+        var token = _testee.CreateToken(issueId, mediaId, mediaType, expiresIn, locale);
 
         // Act
         _testee.RevokeToken(token);
@@ -71,10 +77,12 @@ public class TokenCreatorTests
     public void TryValidateToken_ShouldReturnTrueForValidToken()
     {
         // Arrange
-        var id = 1;
+        var issueId = 1;
+        var mediaId = 1;
         var mediaType = MediaType.Movie;
+        var locale = "en-US";
         var expiresIn = TimeSpan.FromHours(1);
-        var token = _testee.CreateToken(id, mediaType, expiresIn);
+        var token = _testee.CreateToken(issueId, mediaId, mediaType, expiresIn, locale);
 
         // Act
         var isValid = _testee.TryValidateToken(token, out var tokenData);
@@ -82,7 +90,8 @@ public class TokenCreatorTests
         // Assert
         isValid.ShouldBeTrue();
         tokenData.ShouldNotBeNull();
-        tokenData.Id.ShouldBe(id);
+        tokenData.IssueId.ShouldBe(issueId);
+        tokenData.MediaId.ShouldBe(mediaId);
         tokenData.MediaType.ShouldBe(mediaType);
     }
 
@@ -90,10 +99,12 @@ public class TokenCreatorTests
     public void TryValidateToken_ShouldReturnFalseForExpiredToken()
     {
         // Arrange
-        var id = 1;
+        var issueId = 1;
+        var mediaId = 1;
         var mediaType = MediaType.Movie;
+        var locale = "en-US";
         var expiresIn = TimeSpan.FromDays(1);
-        var token = _testee.CreateToken(id, mediaType, expiresIn);
+        var token = _testee.CreateToken(issueId, mediaId, mediaType, expiresIn, locale);
 
         // Act
         _timeProvider.Advance(expiresIn.Add(TimeSpan.FromDays(10)));
@@ -108,10 +119,12 @@ public class TokenCreatorTests
     public void TryValidateToken_ShouldReturnFalseForFaultySignature()
     {
         // Arrange
-        var id = 1;
+        var issueId = 1;
+        var mediaId = 1;
         var mediaType = MediaType.Movie;
+        var locale = "en-US";
         var expiresIn = TimeSpan.FromHours(1);
-        var token = _testee.CreateToken(id, mediaType, expiresIn);
+        var token = _testee.CreateToken(issueId, mediaId, mediaType, expiresIn, locale);
 
         // Act
         var faultyToken = token + "faulty-signature";
@@ -126,10 +139,12 @@ public class TokenCreatorTests
     public void TryValidateToken_ShouldReturnFalseForRevokedToken()
     {
         // Arrange
-        var id = 1;
+        var issueId = 1;
+        var mediaId = 1;
         var mediaType = MediaType.Movie;
+        var locale = "en-US";
         var expiresIn = TimeSpan.FromHours(1);
-        var token = _testee.CreateToken(id, mediaType, expiresIn);
+        var token = _testee.CreateToken(issueId, mediaId, mediaType, expiresIn, locale);
         _testee.RevokeToken(token);
 
         // Act
@@ -159,10 +174,12 @@ public class TokenCreatorTests
     public void TryValidateToken_ShouldTriggerOnTokenInvalidatedForExpiredTokens()
     {
         // Arrange
-        var id = 1;
+        var issueId = 1;
+        var mediaId = 1;
         var mediaType = MediaType.Movie;
+        var locale = "en-US";
         var expiresIn = TimeSpan.FromDays(1);
-        var token = _testee.CreateToken(id, mediaType, expiresIn);
+        var token = _testee.CreateToken(issueId, mediaId, mediaType, expiresIn, locale);
         _testee.RevokeToken(token);
         var eventTriggered = false;
         _testee.OnTokenRevoked += _ => eventTriggered = true;

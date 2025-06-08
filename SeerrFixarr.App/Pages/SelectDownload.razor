@@ -4,11 +4,14 @@
 @using SeerrFixarr.Api.Radarr
 @using SeerrFixarr.Api.Shared
 @using SeerrFixarr.Api.Sonarr
+@using SeerrFixarr.App.Runners.Webhook
 @using SeerrFixarr.App.Shared
 @using SeerrFixarr.Shared
 @inject TokenCreator TokenCreator
 @inject IRadarrApi RadarrApi
 @inject ISonarrApi SonarrApi
+@inject IOverseerrApi OverseerrApi
+@inject CultureScopeFactory CultureScopeFactory
 
 @if (_validToken is null)
 {
@@ -135,7 +138,9 @@ else
     [SupplyParameterFromQuery(Name = Constants.TokenQueryParameterName)]
     public string Token { get; set; } = null!;
     private bool? _validToken;
+    private int _issueId;
     private MediaType _type;
+    private string _localeId = null!;
     private List<InteractiveRelease>? Releases { get; set; }
     private string SelectedLottieUrl { get; set; } = "";
     private bool _showConfirm = false;
@@ -168,11 +173,11 @@ else
             _validToken = TokenCreator.TryValidateToken(Token, out var data);
             if (_validToken == true)
             {
-                (var id, _type) = data;
+                (_issueId, var mediaId, _type, _localeId) = data;
                 Releases = (_type switch
                 {
-                    MediaType.Movie => await RadarrApi.GetMovieReleases(id),
-                    MediaType.Tv => await SonarrApi.GetEpisodeReleases(id),
+                    MediaType.Movie => await RadarrApi.GetMovieReleases(mediaId),
+                    MediaType.Tv => await SonarrApi.GetEpisodeReleases(mediaId),
                     _ => throw new InvalidOperationException("Invalid media type")
                 }).ToList();
             }
@@ -251,6 +256,9 @@ else
             MediaType.Tv => SonarrApi.InteractiveGrabEpisode(request),
             _ => throw new InvalidOperationException("Invalid media type")
         };
+        using var cultureScope = CultureScopeFactory.FromLocale(_localeId);
+        OverseerrApi.PostIssueComment(_issueId, Translations.InteractiveGrabbed);
+        OverseerrApi.UpdateIssueStatus(_issueId, IssueStatus.Resolved);
     }
 
     void OnReleaseSelected(InteractiveRelease obj)

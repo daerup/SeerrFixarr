@@ -123,47 +123,29 @@ namespace SeerrFixarr.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ❓ How do you want to proceed? Type the number of the corresponding option below ⬇️.
+        ///   Looks up a localized string similar to ⬇️ Grabbed release, issue will be closed..
         /// </summary>
-        internal static string HowToProceed {
+        internal static string InteractiveGrabbed {
             get {
-                return ResourceManager.GetString("HowToProceed", resourceCulture);
+                return ResourceManager.GetString("InteractiveGrabbed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 😟 Sorry, I didn&apos;t catch that.
+        ///   Looks up a localized string similar to 📎Copy the URL below and choose a release ⬇️.
         /// </summary>
-        internal static string HowToProceedNotFound {
+        internal static string InteractiveInstructions {
             get {
-                return ResourceManager.GetString("HowToProceedNotFound", resourceCulture);
+                return ResourceManager.GetString("InteractiveInstructions", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1️⃣  Choose a release for me.
+        ///   Looks up a localized string similar to Hint: The list is already sorted – the first release is likely your best choice 👉.
         /// </summary>
-        internal static string HowToProceedOption1 {
+        internal static string InteractiveSorted {
             get {
-                return ResourceManager.GetString("HowToProceedOption1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 2️⃣ Let me choose.
-        /// </summary>
-        internal static string HowToProceedOption2 {
-            get {
-                return ResourceManager.GetString("HowToProceedOption2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 🤡 Arent you a smart one, try again.
-        /// </summary>
-        internal static string HowToProceedOptionOutOfRange {
-            get {
-                return ResourceManager.GetString("HowToProceedOptionOutOfRange", resourceCulture);
+                return ResourceManager.GetString("InteractiveSorted", resourceCulture);
             }
         }
         

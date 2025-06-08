@@ -10,7 +10,12 @@ public class OverseerrApiLoggingInterceptor(IOverseerrApi inner) : IOverseerrApi
     public Task<Issue> GetIssue(int issueId) => inner.GetIssue(issueId);
     public Task DeleteIssue(int issueId) => inner.DeleteIssue(issueId);
 
-    public Task UpdateIssueStatus(int issueId, IssueStatus status) => inner.UpdateIssueStatus(issueId, status);
+    public Task UpdateIssueStatus(int issueId, IssueStatus status)
+    {
+        Log.Information("Updating Issue #{IssueId} Status to {Status}", issueId, status);
+        return inner.UpdateIssueStatus(issueId, status);
+    }
+
     public Task PostIssueComment(int issueId, Comment comment)
     {
         Log.Information("Posting Comment on Issue #{IssueId}: {Message}", issueId, comment.Message);
