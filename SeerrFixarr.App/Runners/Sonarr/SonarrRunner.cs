@@ -105,7 +105,7 @@ public class
     private async Task NotGrabbed(Episode episode, Issue issue, int retryCount)
     {
         await timeOutProvider.AwaitDownloadQueueUpdated();
-        if (retryCount >= 3)
+        if (retryCount >= 5)
         {
             Log.Information("Could not grab episode {identifier} after 3 attempts, closing issue...", issue.GetIdentifier());
             await overseerr.PostIssueComment(issue.Id, ShowTranslationExtensions.EpisodeNotGrabbedMessage(issue.GetIdentifier()));

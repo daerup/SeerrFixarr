@@ -11,6 +11,7 @@ public class FixedRedirectKeyProviderCache(SeerrFixarrSettings settings, Redirec
 
     public Maybe<IRedirectKeyProvider> GetKeyProviderForIdentifier(string id)
     {
+        if (string.IsNullOrWhiteSpace(id)) return Maybe<IRedirectKeyProvider>.None;
         if (!settings.UserRedirectKeyPool.TryGetValue(id, out var pool)) return Maybe<IRedirectKeyProvider>.None;
 
         var provider = _cache.GetOrAdd(id, _ => new FixedRedirectKeyProvider(pool.ToList(), redirectKeyManager));

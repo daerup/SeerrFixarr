@@ -45,7 +45,7 @@ internal class WebhookRunner(
         await overseerr.PostIssueComment(issue.Id, Translations.InteractiveInstructions);
         await overseerr.PostIssueComment(issue.Id, Translations.InteractiveSorted);
         var token = tokenCreator.CreateToken(issue.Id, issue.Media.Id, issue.Media.MediaType, TimeSpan.FromMinutes(10), locale);
-        var key = redirectKeyFactory.GetKeyForIdentifier(issue.CreatedBy.Username);
+        var key = redirectKeyFactory.GetKeyForIdentifier(issue.CreatedBy.PlexUsername);
         redirectKeyManager.AddRedirection(key, token);
         var redirectUrl = $"{settings.ExternalHost}/{key}";
         await overseerr.PostIssueComment(issue.Id, redirectUrl);

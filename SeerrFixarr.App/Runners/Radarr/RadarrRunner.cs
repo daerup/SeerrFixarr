@@ -78,7 +78,7 @@ public class RadarrRunner(
   private async Task NotGrabbed(Movie movie, Issue issue, int retryCount)
   {
       await timeOutProvider.AwaitDownloadQueueUpdated();
-      if (retryCount >= 3)
+      if (retryCount >= 5)
       {
           Log.Information("Could not grab episode {identifier} after 3 attempts, closing issue...", issue.GetIdentifier());
           await overseerr.PostIssueComment(issue.Id, movie.NotGrabbedMessage());
