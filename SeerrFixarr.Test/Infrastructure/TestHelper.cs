@@ -12,7 +12,7 @@ internal static class TestHelper
     {
         var timeOutProvider = application.Services.GetRequiredService<ITimeOutProvider>();
         var callCount = 0;
-        A.CallTo(() => timeOutProvider.AwaitDownloadQueueUpdated()).ReturnsLazily(() =>
+        A.CallTo(() => timeOutProvider.AwaitDownloadQueueUpdatedAsync()).ReturnsLazily(() =>
         {
             var index = callCount % action.Length;
             action[index]();

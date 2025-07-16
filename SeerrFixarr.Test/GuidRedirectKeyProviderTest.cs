@@ -16,10 +16,14 @@ public class GuidRedirectKeyProviderTest
         var provider = new GuidRedirectKeyProvider(_redirectKeyManager);
 
         // Act
-        var key = provider.GetNext();
+        var key1 = provider.GetNext();
+        var key2 = provider.GetNext();
 
         // Assert
-        key.HasValue.ShouldBe(true);
-        key.Value.Length.ShouldBe(5);
+        key2.HasValue.ShouldBe(true);
+        key2.Value.Length.ShouldBe(5);
+        key1.HasValue.ShouldBe(true);
+        key1.Value.Length.ShouldBe(5);
+        key1.ShouldNotBe(key2);
     }
 }

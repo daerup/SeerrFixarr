@@ -2,19 +2,13 @@ namespace SeerrFixarr.App.Runners;
 
 public interface ITimeOutProvider
 {
-  Task AwaitDownloadQueueUpdated();
-  Task AwaitFileDeletion();
+  Task AwaitDownloadQueueUpdatedAsync();
+  Task AwaitFileDeletionAsync();
 }
 
 internal class TimeOutProvider : ITimeOutProvider
 {
-    public Task AwaitDownloadQueueUpdated()
-    {
-        return Task.Delay(TimeSpan.FromSeconds(20));
-    }
-    
-    public Task AwaitFileDeletion()
-    {
-        return Task.Delay(TimeSpan.FromSeconds(10));
-    }
+    public Task AwaitDownloadQueueUpdatedAsync() => Task.Delay(TimeSpan.FromSeconds(20));
+
+    public Task AwaitFileDeletionAsync() => Task.Delay(TimeSpan.FromSeconds(10));
 }

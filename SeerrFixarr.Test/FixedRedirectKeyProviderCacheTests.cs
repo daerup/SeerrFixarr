@@ -38,7 +38,6 @@ public class FixedRedirectKeyProviderCacheTests
 
         // Assert
         first.ShouldBe(second);
-
     }
 
     [Fact]

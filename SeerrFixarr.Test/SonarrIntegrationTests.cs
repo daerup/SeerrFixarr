@@ -42,7 +42,7 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        var response = await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -70,7 +70,7 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        var response = await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -98,7 +98,7 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        var response = await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -125,7 +125,7 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         _sonarrApi.DownloadQueue.ShouldBeEmpty();
@@ -153,7 +153,7 @@ public class SonarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         _sonarrApi.DownloadQueue.Count.ShouldBe(1);

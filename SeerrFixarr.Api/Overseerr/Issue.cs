@@ -16,12 +16,9 @@ public record Issue
     {
         return Media.MediaType switch
         {
-            MediaType.Tv => CreateEpisodeIdentifier(),
-            MediaType.Movie => CreateMovieIdentifier(),
+            MediaType.Tv => $"S{ProblemSeason!.Value:D2}E{ProblemEpisode!.Value:D2}",
+            MediaType.Movie => $"{Media.TmdbId}",
         };
-        
-        string CreateEpisodeIdentifier() => $"S{ProblemSeason!.Value:D2}E{ProblemEpisode!.Value:D2}";
-        string CreateMovieIdentifier() => $"{Media.TmdbId}";
     }
 
     public virtual bool Equals(Issue? other)

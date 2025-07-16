@@ -14,15 +14,15 @@ public static class WebApplicationFactoryExtension
     internal static void ConfigureCommon(this IServiceCollection services)
     {
         var fakeTimeOutProvider = A.Fake<ITimeOutProvider>();
-        A.CallTo(() => fakeTimeOutProvider.AwaitFileDeletion()).Returns(Task.CompletedTask);
-        A.CallTo(() => fakeTimeOutProvider.AwaitDownloadQueueUpdated()).Returns(Task.CompletedTask);
+        A.CallTo(() => fakeTimeOutProvider.AwaitFileDeletionAsync()).Returns(Task.CompletedTask);
+        A.CallTo(() => fakeTimeOutProvider.AwaitDownloadQueueUpdatedAsync()).Returns(Task.CompletedTask);
         services.AddSingleton(fakeTimeOutProvider);
         services.AddScoped<IRadarrApi>(_ => A.Fake<IRadarrApi>());
         services.AddScoped<ISonarrApi>(_ => A.Fake<ISonarrApi>());
         services.AddScoped<IOverseerrApi>(_ => A.Fake<IOverseerrApi>());
     }
 
-    internal static async Task<HttpResponseMessage> CallIssueWebhook(this WebApplicationFactory<Program> factory, object body)
+    internal static async Task<HttpResponseMessage> CallIssueWebhookAsync(this WebApplicationFactory<Program> factory, object body)
     {
         using var httpClient = factory.CreateClient();
         var jsonContent =

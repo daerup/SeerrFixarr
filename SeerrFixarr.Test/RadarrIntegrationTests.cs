@@ -45,7 +45,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        var response = await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -75,7 +75,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        var response = await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -106,7 +106,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        var response = await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -132,7 +132,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        var response = await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        var response = await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         response.StatusCode.ShouldNotBe(HttpStatusCode.OK);
@@ -154,7 +154,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         _radarrApi.DownloadQueue.ShouldBeEmpty();
@@ -183,7 +183,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Setup(testUser);
 
         // Act
-        await _application.CallIssueWebhook(issue.ToWebhookIssueRoot());
+        await _application.CallIssueWebhookAsync(issue.ToWebhookIssueRoot());
 
         // Assert
         _radarrApi.DownloadQueue.Count.ShouldBe(1);

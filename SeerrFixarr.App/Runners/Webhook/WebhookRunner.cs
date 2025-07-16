@@ -25,22 +25,22 @@ internal class WebhookRunner(
 
         await (body.NotificationType switch
         {
-            NotificationType.ISSUE_CREATED => HandleIssueCreated(issue),
-            NotificationType.ISSUE_REOPENED => HandleIssueReopened(issue, locale),
+            NotificationType.ISSUE_CREATED => HandleIssueCreatedAsync(issue),
+            NotificationType.ISSUE_REOPENED => HandleIssueReopenedAsync(issue, locale),
         });
     }
 
-    private async Task HandleIssueCreated(Issue issue)
+    private async Task HandleIssueCreatedAsync(Issue issue)
     {
         await (issue.Media.MediaType switch
         {
-            MediaType.Movie => radarrRunner.HandleMovieIssue(issue),
-            MediaType.Tv => sonarrRunner.HandleEpisodeIssue(issue),
+            MediaType.Movie => radarrRunner.HandleMovieIssueAsync(issue),
+            MediaType.Tv => sonarrRunner.HandleEpisodeIssueAsync(issue),
             _ => Task.CompletedTask
         });
     }
 
-    private async Task HandleIssueReopened(Issue issue, string locale)
+    private async Task HandleIssueReopenedAsync(Issue issue, string locale)
     {
         await overseerr.PostIssueComment(issue.Id, Translations.InteractiveInstructions);
         await overseerr.PostIssueComment(issue.Id, Translations.InteractiveSorted);

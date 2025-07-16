@@ -11,15 +11,15 @@ public class RadarrRunner(
   IRadarrApi radarr,
   ITimeOutProvider timeOutProvider)
 {
-  public async Task HandleMovieIssue(Issue issue)
+  public async Task HandleMovieIssueAsync(Issue issue)
   {
-    var (movie, moviefile) = await GetMovieFromIssue(issue);
-    await DeleteMovieAsync(issue, movie, moviefile);
-    await timeOutProvider.AwaitFileDeletion();
-    await GrabMovie(movie, issue);
+    var (movie, movieFile) = await GetMovieFromIssueAsync(issue);
+    await DeleteMovieAsync(issue, movie, movieFile);
+    await timeOutProvider.AwaitFileDeletionAsync();
+    await GrabMovieAsync(movie, issue);
   }
 
-  private async Task<(Movie, Maybe<MovieFile>)> GetMovieFromIssue(Issue issue)
+  private async Task<(Movie, Maybe<MovieFile>)> GetMovieFromIssueAsync(Issue issue)
   {
     try
     {
@@ -41,7 +41,7 @@ public class RadarrRunner(
     }
   }
 
-  private async Task GrabMovie(Movie movie, Issue issue)
+  private async Task GrabMovieAsync(Movie movie, Issue issue)
   {
     var alreadyGrabbed = (await radarr.GetDownloadQueue(movie.Id)).FirstOrDefault().AsMaybe();
     if (alreadyGrabbed.HasValue)
@@ -54,30 +54,30 @@ public class RadarrRunner(
 
     await radarr.AutomaticGrabMovie(movie.Id);
 
-    await timeOutProvider.AwaitDownloadQueueUpdated();
+    await timeOutProvider.AwaitDownloadQueueUpdatedAsync();
 
-    await CheckIfGrabbed(movie, issue);
+    await CheckIfGrabbedAsync(movie, issue);
   }
 
-  private async Task CheckIfGrabbed(Movie movie, Issue issue, int retryCount = 0)
+  private async Task CheckIfGrabbedAsync(Movie movie, Issue issue, int retryCount = 0)
   {
       var queue = await radarr.GetDownloadQueue(movie.Id);
       var grabbed = queue.FirstOrDefault().AsMaybe();
       await grabbed.Match(
-          async file => await Grabbed(issue, file),
-          async () => await NotGrabbed(movie, issue, retryCount)
+          async file => await GrabbedAsync(issue, file),
+          async () => await NotGrabbedAsync(movie, issue, retryCount)
       );
   }
 
-  private async Task Grabbed(Issue issue, MovieDownload file)
+  private async Task GrabbedAsync(Issue issue, MovieDownload file)
   {
     await overseerr.PostIssueComment(issue.Id, file.GrabbedMessage());
     await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
   }
   
-  private async Task NotGrabbed(Movie movie, Issue issue, int retryCount)
+  private async Task NotGrabbedAsync(Movie movie, Issue issue, int retryCount)
   {
-      await timeOutProvider.AwaitDownloadQueueUpdated();
+      await timeOutProvider.AwaitDownloadQueueUpdatedAsync();
       if (retryCount >= 5)
       {
           Log.Information("Could not grab episode {identifier} after 3 attempts, closing issue...", issue.GetIdentifier());
@@ -87,17 +87,17 @@ public class RadarrRunner(
       }
         
       Log.Information("Could not grab episode {identifier}, retrying...", issue.GetIdentifier());
-      await CheckIfGrabbed(movie, issue, ++retryCount);
+      await CheckIfGrabbedAsync(movie, issue, ++retryCount);
   }
 
   private async Task DeleteMovieAsync(Issue issue, Movie movie, Maybe<MovieFile> file)
   {
     await file.Match(
-      async f => await DeleteFile(issue, movie, f),
+      async f => await DeleteFileAsync(issue, movie, f),
       async () => await overseerr.PostIssueComment(issue.Id, movie.NoFileToDeleteMessage()));
   }
 
-  private async Task DeleteFile(Issue issue, Movie movie, MovieFile file)
+  private async Task DeleteFileAsync(Issue issue, Movie movie, MovieFile file)
   {
     await overseerr.PostIssueComment(issue.Id, movie.DeletionStartedMessage(file));
     await radarr.DeleteMovieFile(file.Id);
