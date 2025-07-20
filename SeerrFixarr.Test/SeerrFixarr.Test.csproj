@@ -8,41 +8,42 @@
         <RootNamespace>SeerrFixarr.Test</RootNamespace>
         <LangVersion>preview</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <!--
-        To enable the Microsoft Testing Platform 'dotnet test' experience, add property:
-          <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
-    
-        To enable the Microsoft Testing Platform native command line experience, add property:
-          <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
-    
-        For more information on Microsoft Testing Platform support in xUnit.net, please visit:
-          https://xunit.net/docs/getting-started/v3/microsoft-testing-platform
-        -->
+        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+        <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+        <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+        <Using Include="Xunit" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FakeItEasy" Version="8.3.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0-preview.4.25258.110"/>
+        <PackageReference Include="FakeItEasy" Version="8.3.0" />
+        <PackageReference Include="Fody" Version="6.9.2">
+          <PrivateAssets>All</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0-preview.4.25258.110" />
+        <PackageReference Include="Microsoft.CodeCoverage" Version="17.14.1" />
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="9.5.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
         <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
         <PackageReference Include="Shouldly" Version="4.3.0" />
         <PackageReference Include="Verify.XunitV3" Version="30.1.0" />
+        <PackageReference Include="Virtuosity.Fody" Version="3.1.2">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="Xunit.Combinatorial" Version="2.0.24" />
-        <PackageReference Include="xunit.v3" Version="2.0.2"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0"/>
+        <PackageReference Include="xunit.v3" Version="2.0.2" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SeerrFixarr.Api\SeerrFixarr.Api.csproj"/>
+        <ProjectReference Include="..\SeerrFixarr.Api\SeerrFixarr.Api.csproj" />
         <ProjectReference Include="..\SeerrFixarr.App\SeerrFixarr.App.csproj" />
     </ItemGroup>
 

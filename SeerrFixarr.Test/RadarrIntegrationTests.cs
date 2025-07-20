@@ -54,7 +54,8 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         );
         _radarrApi.DownloadQueue.ShouldHaveSingleItem().ShouldSatisfyAllConditions(d => d.MovieId.ShouldBe(movie.Id));
         _radarrApi.Movies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(m => m.Id.ShouldBe(movie.Id),
-            m => m.MovieFile.ShouldBeNull(), m => m.HasFile.ShouldBeFalse()
+                                                                            m => m.MovieFile.ShouldBeNull(),
+                                                                            m => m.HasFile.ShouldBeFalse()
         );
         await Verify(_overseerrApi.Comments.Values);
     }
@@ -82,7 +83,7 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         _overseerrApi.Issues.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
             i => i.Id.ShouldBe(issue.Id), i => i.Status.ShouldBe((int)IssueStatus.Resolved)
         );
-        _radarrApi.DownloadQueue.ShouldHaveSingleItem().ShouldSatisfyAllConditions(d => d.MovieId.ShouldBe(movie.Id));
+        _radarrApi.DownloadQueue.ShouldHaveSingleItem().MovieId.ShouldBe(movie.Id);
         _radarrApi.Movies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
             m => m.Id.ShouldBe(movie.Id), m => m.MovieFile.ShouldBeNull(), m => m.HasFile.ShouldBeFalse()
         );
@@ -190,14 +191,5 @@ public class RadarrIntegrationTests : IClassFixture<WebApplicationFactory<Progra
         await Verify(_overseerrApi.Comments.Values);
     }
 
-    private static Movie GetMovieIdOverride(int? idOverride, Movie movie)
-    {
-        var movieOverride = movie;
-        if (idOverride is not null)
-        {
-            movieOverride = movieOverride with { Id = idOverride.Value };
-        }
-
-        return movieOverride;
-    }
+    private static Movie GetMovieIdOverride(int? idOverride, Movie movie) => movie with { Id = idOverride ?? movie.Id };
 }

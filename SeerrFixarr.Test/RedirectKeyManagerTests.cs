@@ -12,7 +12,7 @@ public class RedirectKeyManagerTests
 
     public RedirectKeyManagerTests()
     {
-        _tokenCreator = A.Fake<TokenCreator>();
+        _tokenCreator = new TokenCreator(A.Dummy<TimeProvider>(), A.Dummy<string>());
         _testee = new RedirectKeyManager(_tokenCreator);
     }
 

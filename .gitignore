@@ -58,3 +58,5 @@ nunit-*.xml
 *.received/
 *.idea/
 *.env
+
+/CoverageReport

@@ -10,10 +10,7 @@ public class RedirectKeyManager
 {
     private readonly ConcurrentDictionary<string, RedirectionTarget> _redirections = new();
 
-    public RedirectKeyManager(TokenCreator tokenCreator)
-    {
-        tokenCreator.OnTokenRevoked += RemoveRevokedRedirections;
-    }
+    public RedirectKeyManager(TokenCreator tokenCreator) => tokenCreator.OnTokenRevoked += RemoveRevokedRedirections;
 
     public event Action<string> OnRedirectionKeyCreated = delegate { };
     public event Action<string> OnRedirectionKeyDestroyed = delegate { };

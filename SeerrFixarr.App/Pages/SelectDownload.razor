@@ -143,8 +143,8 @@ else
     private string _localeId = null!;
     private List<InteractiveRelease>? Releases { get; set; }
     private string SelectedLottieUrl { get; set; } = "";
-    private bool _showConfirm = false;
-    private bool _selectionConfirmed = false;
+    private bool _showConfirm;
+    private bool _selectionConfirmed;
     private InteractiveRelease? _selectedRelease;
 
     SortModel _sortModel = new() { Header = "Default", IsAscending = true };

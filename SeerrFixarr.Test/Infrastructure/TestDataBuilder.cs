@@ -8,12 +8,12 @@ namespace SeerrFixarr.Test.Infrastructure;
 
 internal static class TestDataBuilder
 {
-    public static TimeProvider FakeTimeProvider =
+    public static readonly TimeProvider FakeTimeProvider =
         new FakeTimeProvider(new DateTimeOffset(2025, 12, 31, 12, 05, 57, TimeSpan.Zero));
 
-    private static int _idSequence;
+    private static int idSequence;
 
-    public static User TestUser;
+    public static readonly User TestUser;
 
     static TestDataBuilder()
     {
@@ -31,7 +31,7 @@ internal static class TestDataBuilder
         };
     }
 
-    public static void Reset() => _idSequence = 0;
+    public static void Reset() => idSequence = 0;
 
     public static Issue CreateIssueFor(Movie movie)
     {
@@ -122,6 +122,6 @@ internal static class TestDataBuilder
 
     private static int GetNextId()
     {
-        return _idSequence++;
+        return idSequence++;
     }
 }

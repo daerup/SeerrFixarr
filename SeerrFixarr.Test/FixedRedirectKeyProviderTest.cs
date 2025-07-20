@@ -8,7 +8,7 @@ namespace SeerrFixarr.Test;
 
 public class FixedRedirectKeyProviderTest
 {
-    private readonly RedirectKeyManager _redirectKeyManager = A.Fake<RedirectKeyManager>();
+    private readonly RedirectKeyManager _redirectKeyManager = new RedirectKeyManager(A.Dummy<TokenCreator>());
 
     [Fact]
     public void GetNextKey_ShouldReturnOneOfTheFixedKeys()
@@ -52,7 +52,7 @@ public class FixedRedirectKeyProviderTest
     public void GetNextKey_ShouldReturnNullIfNoKeysAvailable()
     {
         // Arrange
-        var provider = new FixedRedirectKeyProvider(Array.Empty<string>(), _redirectKeyManager);
+        var provider = new FixedRedirectKeyProvider([], _redirectKeyManager);
 
         // Act
         var key = provider.GetNext();
@@ -92,7 +92,6 @@ public class FixedRedirectKeyProviderTest
         var secondKey = provider.GetNext();
         
         // Assert
-        secondKey.HasValue.ShouldBe(true);
         secondKey.ShouldBe(firstKey);
     }
     
@@ -133,7 +132,7 @@ public class FixedRedirectKeyProviderTest
     {
         // Arrange
         var keys = new[] { "key1" };
-        var provider = new FixedRedirectKeyProvider(keys, _redirectKeyManager);
+        _ = new FixedRedirectKeyProvider(keys, _redirectKeyManager);
         
         // Act
         var act = () => _redirectKeyManager.InvokeOnRedirectionKeyDestroyed("key1");
