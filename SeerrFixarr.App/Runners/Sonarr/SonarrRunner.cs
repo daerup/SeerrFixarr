@@ -1,19 +1,27 @@
+using System.Diagnostics;
 using CSharpFunctionalExtensions;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.Api.Sonarr;
+using SeerrFixarr.App.Shared;
 using Serilog;
 
 namespace SeerrFixarr.App.Runners.Sonarr;
 
-public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutProvider timeOutProvider)
+public class SonarrRunner(
+    IssueTargetInformationExtractor issueTargetInformationExtractor,
+    IOverseerrApi overseerr,
+    ISonarrApi sonarr,
+    ITimeOutProvider timeOutProvider)
 {
     public async Task HandleEpisodeIssueAsync(Issue issue)
     {
-        await (GetTarget(issue) switch
+        var info = await issueTargetInformationExtractor.ExtractFromAsync(issue);
+        await (info.TargetType switch
         {
-            IssueTargetSonarr.SpecificEpisode => HandleSpecificEpisodeAsync(issue),
-            IssueTargetSonarr.WholeSeason => HandleWholeSeasonAsync(issue),
-            IssueTargetSonarr.AllSeasons => HandleAllSeasonsAsync(issue),
+            IssueTarget.Episode => HandleSpecificEpisodeAsync(issue),
+            IssueTarget.Season => HandleWholeSeasonAsync(issue),
+            IssueTarget.Show => HandleAllSeasonsAsync(issue),
+            IssueTarget.Movie => throw new UnreachableException(),
         });
     }
 
@@ -27,7 +35,7 @@ public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutPr
             {
                 await DeleteEpisodeAsync(issue, episodeFile);
                 await timeOutProvider.AwaitFileDeletionAsync();
-                await GrabEpisodeAsync(e, issue);
+                await GrabEpisodeAsync(e.Id, issue);
             },
             async () => await SkipFixingAsync(issue, seasonEpisodeString));
     }
@@ -50,48 +58,34 @@ public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutPr
         await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
     }
 
-    private static IssueTargetSonarr GetTarget(Issue issue)
-    {
-        return issue switch
-        {
-            { ProblemSeason: >= 0, ProblemEpisode: > 0 } => IssueTargetSonarr.SpecificEpisode,
-            { ProblemSeason: > 0, ProblemEpisode: 0 } => IssueTargetSonarr.WholeSeason,
-            { ProblemSeason: 0, ProblemEpisode: 0 } => IssueTargetSonarr.AllSeasons,
-            _ => throw new ArgumentOutOfRangeException($"Unknown issue type: {issue}")
-        };
-    }
-
     private async Task<(Maybe<Episode>, Maybe<EpisodeFile>)> GetEpisodeFromIssueAsync(Issue issue)
     {
-        var episodeNumber = issue.ProblemEpisode!.Value;
-        var seasonNumber = issue.ProblemSeason!.Value;
-        var episodes = await sonarr.GetEpisodes(issue.Media.Id, seasonNumber);
-        var episode = episodes.SingleOrDefault(e => e.EpisodeNumber == episodeNumber).AsMaybe();
+        var episode = await sonarr.GetEpisodeFromIssueAsync(issue);
         var episodeFile = episode.Bind(e => e.EpisodeFile.AsMaybe());
         return (episode, episodeFile);
     }
 
-    private async Task GrabEpisodeAsync(Episode episode, Issue issue)
+    private async Task GrabEpisodeAsync(int episodeId, Issue issue)
     {
-        var alreadyGrabbed = (await sonarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
+        var alreadyGrabbed = (await sonarr.GetDownloadQueueOfEpisodes([episodeId])).FirstOrDefault().AsMaybe();
         if (alreadyGrabbed.HasValue)
         {
             await HandleDownloadAlreadyInProgressAsync(issue, alreadyGrabbed.Value);
             return;
         }
 
-        await sonarr.AutomaticGrabEpisode(episode.Id);
+        await sonarr.AutomaticGrabEpisode(episodeId);
         await timeOutProvider.AwaitDownloadQueueUpdatedAsync();
 
-        await CheckIfGrabbedAsync(episode, issue);
+        await CheckIfGrabbedAsync(episodeId, issue);
     }
 
-    private async Task CheckIfGrabbedAsync(Episode episode, Issue issue, int retryCount = 0)
+    private async Task CheckIfGrabbedAsync(int episodeId, Issue issue, int retryCount = 0)
     {
-        var grabbed = (await sonarr.GetDownloadQueueOfEpisodes([episode.Id])).FirstOrDefault().AsMaybe();
+        var grabbed = (await sonarr.GetDownloadQueueOfEpisodes([episodeId])).FirstOrDefault().AsMaybe();
         await grabbed.Match(
             async f => await GrabbedAsync(issue, f),
-            async () => await NotGrabbedAsync(episode, issue, retryCount)
+            async () => await NotGrabbedAsync(episodeId, issue, retryCount)
         );
     }
 
@@ -101,7 +95,7 @@ public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutPr
         await overseerr.UpdateIssueStatus(issue.Id, IssueStatus.Resolved);
     }
 
-    private async Task NotGrabbedAsync(Episode episode, Issue issue, int retryCount)
+    private async Task NotGrabbedAsync(int episodeId, Issue issue, int retryCount)
     {
         await timeOutProvider.AwaitDownloadQueueUpdatedAsync();
         if (retryCount >= 5)
@@ -115,7 +109,7 @@ public class SonarrRunner(IOverseerrApi overseerr, ISonarrApi sonarr, ITimeOutPr
         }
 
         Log.Information("Could not grab episode {identifier}, retrying...", issue.GetIdentifier());
-        await CheckIfGrabbedAsync(episode, issue, ++retryCount);
+        await CheckIfGrabbedAsync(episodeId, issue, ++retryCount);
     }
 
     private async Task HandleDownloadAlreadyInProgressAsync(Issue issue, EpisodeDownload alreadyGrabbed)

@@ -13,16 +13,16 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddRefitClient<IRadarrApi>()
-            .ConfigureApiClient(settings => settings.Radarr);
+            .WithSettingsFrom(settings => settings.Radarr);
         services
             .AddRefitClient<ISonarrApi>()
-            .ConfigureApiClient(settings => settings.Sonarr);
+            .WithSettingsFrom(settings => settings.Sonarr);
         services
             .AddRefitClient<IOverseerrApi>()
-            .ConfigureApiClient(settings => settings.Overseerr);
+            .WithSettingsFrom(settings => settings.Overseerr);
     }
     
-    private static void ConfigureApiClient(this IHttpClientBuilder builder, Func<SeerrFixarrSettings, ApiSettings> configSelector)
+    private static void WithSettingsFrom(this IHttpClientBuilder builder, Func<SeerrFixarrSettings, ApiSettings> configSelector)
     {
         builder.ConfigureHttpClient((serviceProvider, client) =>
         {

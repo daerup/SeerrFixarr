@@ -61,6 +61,7 @@ public static class BuilderExtensions
         services.Decorate<IOverseerrApi, OverseerrApiLoggingInterceptor>();
         services.AddScoped<CultureScopeFactory>();
         services.AddScoped<ITimeOutProvider, TimeOutProvider>();
+        services.AddScoped<IssueTargetInformationExtractor>();
         services.AddScoped<WebhookRunner>();
         services.AddScoped<RadarrRunner>();
         services.AddScoped<SonarrRunner>();

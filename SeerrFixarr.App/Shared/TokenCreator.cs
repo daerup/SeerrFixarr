@@ -3,10 +3,20 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using SeerrFixarr.Api.Overseerr;
+using SeerrFixarr.App.Runners;
+using SeerrFixarr.App.Runners.Sonarr;
 
 namespace SeerrFixarr.App.Shared;
 
-public record TokenData(int IssueId, int MediaId, MediaType MediaType, string UserLocale);
+public record TokenData(int IssueId, int MediaId, IssueTarget IssueTarget, string UserLocale);
+
+public enum IssueTarget
+{
+    Movie,
+    Episode,
+    Season,
+    Show
+}
 
 public class TokenCreator(TimeProvider timeProvider, string secret)
 {
@@ -14,18 +24,19 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
     private readonly HashSet<string> _revokedTokens = [];
     private const string IssueIdClaimString = nameof(IssueIdClaimString);
     private const string MediaIdClaimString = nameof(MediaIdClaimString);
-    private const string MediaTypeClaimString = nameof(MediaTypeClaimString);
+    private const string IssueTargetClaimString = nameof(IssueTargetClaimString);
     private const string UserLocaleClaimString = nameof(UserLocaleClaimString);
 
     public event Action<string> OnTokenRevoked = delegate { };
 
-    public string CreateToken(int issueId, int mediaId, MediaType mediaType, TimeSpan expiresIn, string locale)
+    public string CreateToken(int issueId, IssueTargetInformation issueInfo, TimeSpan expiresIn, string locale)
     {
+        var (targetType, targetId) = issueInfo;
         var claims = new[]
         {
             new Claim(IssueIdClaimString, issueId.ToString()),
-            new Claim(MediaIdClaimString, mediaId.ToString()),
-            new Claim(MediaTypeClaimString, mediaType.ToString()),
+            new Claim(MediaIdClaimString, targetId.ToString()),
+            new Claim(IssueTargetClaimString, targetType.ToString()),
             new Claim(UserLocaleClaimString, locale)
         };
 
@@ -104,15 +115,15 @@ public class TokenCreator(TimeProvider timeProvider, string secret)
 
             var issueIdClaim = principal.FindFirst(IssueIdClaimString)?.Value;
             var mediaIdClaim = principal.FindFirst(MediaIdClaimString)?.Value;
-            var typeClaim = principal.FindFirst(MediaTypeClaimString)?.Value;
+            var targetClaim = principal.FindFirst(IssueTargetClaimString)?.Value;
             var localeClaim = principal.FindFirst(UserLocaleClaimString)?.Value;
 
-            if (int.TryParse(issueIdClaim, out var issueId) && 
+            if (int.TryParse(issueIdClaim, out var issueId) &&
                 int.TryParse(mediaIdClaim, out var mediaId) &&
-                Enum.TryParse<MediaType>(typeClaim, out var mediaType) &&
-                localeClaim is {} locale)
+                Enum.TryParse<IssueTarget>(targetClaim, out var issueTarget) &&
+                localeClaim is { } locale)
             {
-                tokenData = new TokenData(issueId, mediaId, mediaType, locale);
+                tokenData = new TokenData(issueId, mediaId, issueTarget, locale);
                 return true;
             }
 

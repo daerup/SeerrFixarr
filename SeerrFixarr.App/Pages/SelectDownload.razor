@@ -139,7 +139,7 @@ else
     public string Token { get; set; } = null!;
     private bool? _validToken;
     private int _issueId;
-    private MediaType _type;
+    private IssueTarget _type;
     private string _localeId = null!;
     private List<InteractiveRelease>? Releases { get; set; }
     private string SelectedLottieUrl { get; set; } = "";
@@ -176,9 +176,9 @@ else
                 (_issueId, var mediaId, _type, _localeId) = data;
                 Releases = (_type switch
                 {
-                    MediaType.Movie => await RadarrApi.GetMovieReleases(mediaId),
-                    MediaType.Tv => await SonarrApi.GetEpisodeReleases(mediaId),
-                    _ => throw new InvalidOperationException("Invalid media type")
+                    IssueTarget.Movie => await RadarrApi.GetMovieReleases(mediaId),
+                    IssueTarget.Episode => await SonarrApi.GetEpisodeReleases(mediaId),
+                    _ => throw new NotSupportedException("Unsupported media type")
                 }).ToList();
             }
             StateHasChanged();
@@ -252,9 +252,9 @@ else
         var request = InteractiveReleaseGrabRequest.FromRelease(_selectedRelease!);
         _ = _type switch
         {
-            MediaType.Movie => RadarrApi.InteractiveGrabMovie(request),
-            MediaType.Tv => SonarrApi.InteractiveGrabEpisode(request),
-            _ => throw new InvalidOperationException("Invalid media type")
+             IssueTarget.Movie => RadarrApi.InteractiveGrabMovie(request),
+             IssueTarget.Episode => SonarrApi.InteractiveGrabEpisode(request),
+             _ => throw new NotSupportedException("Unsupported media type")
         };
         using var cultureScope = CultureScopeFactory.FromLocale(_localeId);
         OverseerrApi.PostIssueComment(_issueId, Translations.InteractiveGrabbed);
@@ -266,5 +266,4 @@ else
         _selectedRelease = obj;
         _showConfirm = true;
     }
-
 }

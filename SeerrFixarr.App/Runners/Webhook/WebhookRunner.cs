@@ -9,6 +9,7 @@ namespace SeerrFixarr.App.Runners.Webhook;
 
 internal class WebhookRunner(
     CultureScopeFactory scopeFactory,
+    IssueTargetInformationExtractor issueTargetInformationExtractor,
     IOverseerrApi overseerr,
     RadarrRunner radarrRunner,
     SonarrRunner sonarrRunner,
@@ -36,7 +37,6 @@ internal class WebhookRunner(
         {
             MediaType.Movie => radarrRunner.HandleMovieIssueAsync(issue),
             MediaType.Tv => sonarrRunner.HandleEpisodeIssueAsync(issue),
-            _ => Task.CompletedTask
         });
     }
 
@@ -44,7 +44,8 @@ internal class WebhookRunner(
     {
         await overseerr.PostIssueComment(issue.Id, Translations.InteractiveInstructions);
         await overseerr.PostIssueComment(issue.Id, Translations.InteractiveSorted);
-        var token = tokenCreator.CreateToken(issue.Id, issue.Media.Id, issue.Media.MediaType, TimeSpan.FromMinutes(10), locale);
+        var issueInfo = await issueTargetInformationExtractor.ExtractFromAsync(issue);
+        var token = tokenCreator.CreateToken(issue.Id, issueInfo, TimeSpan.FromMinutes(10), locale);
         var key = redirectKeyFactory.GetKeyForIdentifier(issue.CreatedBy.PlexUsername);
         redirectKeyManager.AddRedirection(key, token);
         var redirectUrl = $"{settings.ExternalHost}/{key}";
