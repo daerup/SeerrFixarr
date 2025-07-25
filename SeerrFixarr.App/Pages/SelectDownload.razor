@@ -1,5 +1,6 @@
 @page "/select"
 @rendermode RenderMode.InteractiveServer
+@using SeerrFixarr.Api.Lottie
 @using SeerrFixarr.Api.Overseerr
 @using SeerrFixarr.Api.Radarr
 @using SeerrFixarr.Api.Shared
@@ -12,6 +13,7 @@
 @inject ISonarrApi SonarrApi
 @inject IOverseerrApi OverseerrApi
 @inject CultureScopeFactory CultureScopeFactory
+@inject ILottieProvider LottieProvider
 
 @if (_validToken is null)
 {
@@ -112,7 +114,7 @@ else
             Request has been sent. You may close this site now...
         </Header>
         <Content>
-            <Lottie Source="https://lottie.host/f71fc150-b932-43c8-8e94-9a56378e9532/h8dqLNwhtu.json"
+            <Lottie Source="@LottieProvider.GetSuccessLottieUrl()"
                     Class="downloading" Loop="false"/>
         </Content>
     </Dialog>
@@ -149,17 +151,12 @@ else
 
     SortModel _sortModel = new() { Header = "Default", IsAscending = true };
 
-    private readonly string[] _lottieUrls =
-    [
-        "https://lottie.host/a627b5c0-0ab3-4c49-93bb-a932abad340c/0Gqo2a9cNJ.json", // Among Us
-        "https://lottie.host/71193800-a90c-4077-9b4f-14d2500ab554/e6fEgiQUvj.json" // Dinosaur
-    ];
-
     protected override void OnAfterRender(bool firstRender)
     {
-        SelectedLottieUrl = _lottieUrls[new Random().Next(_lottieUrls.Length)];
         if (firstRender)
         {
+            string[] lottieUrls = [LottieProvider.GetAmongUsLottieUrl(), LottieProvider.GetDinoLottieUrl()];
+            SelectedLottieUrl = lottieUrls[new Random().Next(lottieUrls.Length)];
             LoadReleasesAsync().ContinueWith(_ => HandleSorting(_sortModel));
         }
 

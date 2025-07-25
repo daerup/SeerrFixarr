@@ -10,6 +10,19 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "CULTURE": "de-CH"
       }
+    },
+    "Mocked Server": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "select",
+      "applicationUrl": "http://localhost:8080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "CULTURE": "de-CH",
+        "OVERSEERR__APIURL": "http://localhost:9090/overseerr/api",
+        "SONARR__APIURL": "http://localhost:9090/sonarr/api",
+        "RADARR__APIURL": "http://localhost:9090/radarr/api"
+      }
     }
   }
 }

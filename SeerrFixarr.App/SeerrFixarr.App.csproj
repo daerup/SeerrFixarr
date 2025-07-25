@@ -47,6 +47,7 @@
     <ItemGroup>
       <ProjectReference Include="..\SeerrFixarr.Api\SeerrFixarr.Api.csproj" />
       <ProjectReference Include="..\SeerrFixarr.Shared\SeerrFixarr.Shared.csproj" />
+      <ProjectReference Include="..\SeerrFixarr.WireMock\SeerrFixarr.WireMock.csproj" />
     </ItemGroup>
     <ItemGroup>
       <None Update="appsettings.json">

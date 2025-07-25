@@ -2,9 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.Runners;
-using SeerrFixarr.App.Runners.Sonarr;
 
 namespace SeerrFixarr.App.Shared;
 

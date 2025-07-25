@@ -2,8 +2,10 @@ using System.Reflection;
 using Meziantou.Framework;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
+using SeerrFixarr.Api.Lottie;
 using SeerrFixarr.Api.Overseerr;
 using SeerrFixarr.App.KeyProvider;
+using SeerrFixarr.App.Lottie;
 using SeerrFixarr.App.Runners;
 using SeerrFixarr.App.Runners.Radarr;
 using SeerrFixarr.App.Runners.Sonarr;
@@ -36,9 +38,9 @@ public static class BuilderExtensions
         builder.Configuration
             .AddJsonFile("appsettings.json", optional, reloadOnChange)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName.ToLower()}.json", optional, reloadOnChange)
+            .AddUserSecrets(Assembly.GetExecutingAssembly(), optional)
             .AddEnvironmentVariables()
-            .Add(new UserRedirectKeyPoolConfigurationSource())
-            .AddUserSecrets(Assembly.GetExecutingAssembly(), optional);
+            .Add(new UserRedirectKeyPoolConfigurationSource());
         builder.Services.Configure<SeerrFixarrSettings>(builder.Configuration);
         builder.Services.AddTransient<SeerrFixarrSettings>(sp =>
         {
@@ -74,6 +76,7 @@ public static class BuilderExtensions
         services.AddTransient<GuidRedirectKeyProvider>();
         services.AddSingleton<FixedRedirectKeyProviderCache>();
         services.AddScoped<RedirectKeyFactory>();
+        services.AddScoped<ILottieProvider, LottieProvider>();
     }
 
     public static void AddBlazor(this IServiceCollection services)

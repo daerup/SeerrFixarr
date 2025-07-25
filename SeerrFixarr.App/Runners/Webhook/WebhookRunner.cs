@@ -4,6 +4,7 @@ using SeerrFixarr.App.Runners.Radarr;
 using SeerrFixarr.App.Runners.Sonarr;
 using SeerrFixarr.App.Shared;
 using SeerrFixarr.Shared.Settings;
+using Serilog;
 
 namespace SeerrFixarr.App.Runners.Webhook;
 
@@ -49,6 +50,9 @@ internal class WebhookRunner(
         var key = redirectKeyFactory.GetKeyForIdentifier(issue.CreatedBy.PlexUsername);
         redirectKeyManager.AddRedirection(key, token);
         var redirectUrl = $"{settings.ExternalHost}/{key}";
+        
+        Log.Logger.Information("Created token for issue #{IssueId} with redirect URL: {RedirectUrl}", issue.Id, redirectUrl);
+        
         await overseerr.PostIssueComment(issue.Id, redirectUrl);
     }
 }

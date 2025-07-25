@@ -11,7 +11,7 @@ public class ArchitectureTests
     
     public ArchitectureTests()
     {
-        Type[] type = [typeof(Program), typeof(IOverseerrApi), typeof(SeerrFixarrSettings), GetType()];
+        Type[] type = [typeof(SeerrFixarr.App.App), typeof(IOverseerrApi), typeof(SeerrFixarrSettings), GetType()];
         SeerrFixarrTypes = Types.InAssemblies(type.Select(t => Assembly.GetAssembly(t)!).ToArray());
     }
 

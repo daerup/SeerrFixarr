@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeerrFixarr.Shared", "Seerr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeerrFixarr.Test", "SeerrFixarr.Test\SeerrFixarr.Test.csproj", "{0AFB13D2-41FB-489B-8C52-F3FED9F49498}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeerrFixarr.WireMock", "SeerrFixarr.WireMock\SeerrFixarr.WireMock.csproj", "{335229BE-1D8A-4F4A-9A3C-C07801AB67BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,5 +45,9 @@ Global
 		{0AFB13D2-41FB-489B-8C52-F3FED9F49498}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AFB13D2-41FB-489B-8C52-F3FED9F49498}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AFB13D2-41FB-489B-8C52-F3FED9F49498}.Release|Any CPU.Build.0 = Release|Any CPU
+		{335229BE-1D8A-4F4A-9A3C-C07801AB67BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{335229BE-1D8A-4F4A-9A3C-C07801AB67BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{335229BE-1D8A-4F4A-9A3C-C07801AB67BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{335229BE-1D8A-4F4A-9A3C-C07801AB67BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
