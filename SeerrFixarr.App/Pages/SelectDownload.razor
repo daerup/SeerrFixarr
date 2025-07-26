@@ -53,12 +53,12 @@ else
                             <span class="text-muted">No languages</span>
                             break;
                         case 1:
-                            <Button Text="@context.Languages[0].Name" Disabled Type="ButtonType.Secondary"/>
+                            <Button Text="@context.Languages[0].Name" Disabled Type="ButtonType.Secondary" class="language-badge"/>
                             break;
                         default:
                             <Tooltip Tip="@string.Join(Environment.NewLine, context.Languages.Select(l => l.Name))"
                                      TipWidth="10px" ShowBelow>
-                                <Button Text="Multi-language" Disabled Type="ButtonType.Secondary"/>
+                                <Button Text="Multi-language" Disabled Type="ButtonType.Secondary" class="language-badge"/>
                             </Tooltip>
                             break;
                     }
